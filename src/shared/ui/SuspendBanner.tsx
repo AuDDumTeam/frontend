@@ -3,7 +3,7 @@ export function SuspendBanner() {
   return (
     <div
       role="status"
-      className="bg-suspend-bg text-suspend-fg rounded-banner mx-5 mt-1 px-4 py-3 text-[12.5px] font-bold"
+      className="bg-suspend-bg text-suspend-fg rounded-banner mx-5 mb-1.5 flex-none px-4 py-3 text-[12.5px] leading-normal font-bold"
     >
       이용이 정지된 계정이에요. 조회만 할 수 있어요
     </div>

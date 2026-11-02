@@ -25,7 +25,12 @@ function startMocking() {
 export function MockProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!MOCKING_ENABLED) return;
-    void startMocking().then(() => onlineManager.setOnline(true));
+    // 워커 시작이 실패해도(서비스 워커 미지원 등) 쿼리가 영원히 대기하지 않도록 반드시 풀어 준다.
+    startMocking()
+      .catch((error: unknown) =>
+        console.error("[MSW] 목 워커를 시작하지 못했어요", error),
+      )
+      .finally(() => onlineManager.setOnline(true));
   }, []);
 
   return <>{children}</>;

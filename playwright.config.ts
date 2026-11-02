@@ -11,7 +11,8 @@ export default defineConfig({
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
   },
-  projects: [{ name: "mobile", use: { ...devices["iPhone 14"] } }],
+  // Chromium 기반 모바일 뷰포트. (iPhone 프로필은 WebKit 이라 별도 설치가 필요하다)
+  projects: [{ name: "mobile", use: { ...devices["Pixel 7"] } }],
   webServer: {
     command: "pnpm dev",
     url: "http://localhost:3000",

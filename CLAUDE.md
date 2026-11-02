@@ -49,13 +49,31 @@ src/shared/           ui · lib · styles(토큰) · 에러 처리
 - MSW는 3.x라 옵션명이 다르다(`onUnhandledRequest` 대신 `onUnhandledFrame`).
 - 서버 오류는 `code`를 문구로 매핑하는 한 곳(`shared/lib/error-messages.ts`)에서 처리한다. 화면에 코드(`POLL_CLOSED` 등)를 노출하지 않는다.
 - 퍼센트·득표수는 서버가 내려줄 때만 표시한다(미참여·진행 중에는 응답에 없음).
+- 생성된 DTO는 모든 필드가 optional이다. 화면은 DTO를 직접 쓰지 않고 `features/*/api/mappers.ts`에서 검증·변환한 도메인 타입만 쓴다. 쓸 수 없는 응답은 `null`로 걸러 오류 화면으로 보낸다. 모르는 카테고리는 기타로, 모르는 공개 상태는 거른다(모를 땐 비공개 쪽이 안전).
+- 브라우저는 같은 출처 `/api/*`만 부른다. `next.config.ts`의 `rewrites`가 `API_PROXY_TARGET`(기본 `localhost:8080`)으로 넘긴다. 그래서 CORS 설정이 필요 없다.
+- 목 모드에서 계정 상태는 주소에 `?mockRole=guest|member|suspended|admin`을 붙여 바꾼다(sessionStorage 유지). 개발·E2E 전용이다.
+- 선택지 `position`은 0일 수 있다. 존재 여부는 `=== null`/`typeof`로 판단하고 `!position`으로 판단하지 않는다.
+- 같은 규칙을 두 곳에 쓰지 않는다. API 값 보정(`toCategory`, `toDate`)은 `poll/model/parse.ts`가 소유하고 다른 feature는 `index.ts`로 가져다 쓴다. 여러 feature가 함께 아는 쿼리 키 접두사는 `shared/api/query-keys.ts`에 둔다.
+- 오류는 `ApiError`(서버가 거절), `NetworkError`(서버에 닿지 못함)로 구분한다. 일반 `TypeError`는 코드 버그이므로 네트워크 문구로 안내하지 않는다.
+
+## Next 16 규칙 (cacheComponents 사용 중)
+
+- 동적 경로(`p/[id]`)의 `await params`와 `useSearchParams()`는 `<Suspense>` 안에서 읽는다. 아니면 빌드가 막힌다. (예: `app/p/[id]/page.tsx`, `app/(tabs)/page.tsx`)
+- `aria-disabled`지만 눌림을 받는 버튼("이 답장 보내기")은 Playwright에서 `click({ force: true })`로 누른다.
+
+## 백엔드 계약 대기 (화면은 현재 값으로 대체)
+
+- 목록 응답에 내 참여 여부(`myChoice`) 없음 → 피드의 "참여 완료" pill이 뜨지 않는다 (`FeedItem.joined`는 항상 false).
+- 상세 응답에 작성자 여부(`mine`) 없음 → `⋯` 메뉴(삭제/신고 구분)는 4단계에서 연결한다.
+- 모든 응답 필드에 `required` 없음 → 매퍼가 방어한다. 서버가 required를 명시하면 `pnpm api:sync` 후 매퍼를 단순화한다.
 
 ## 스타일 규칙
 
 - 색·라운드·간격은 `@theme` 토큰만 사용한다. hex 값 직접 사용 금지.
 - 폰트 굵기는 800/700/400만. 아이콘은 라인 아이콘, 이모지 금지.
 - 모션은 README 값을 따르고 `prefers-reduced-motion`에서 translate/scale을 제거한다.
-- 접근성: 실제 `<button>`, 시트 focus trap + ESC, 토스트 `aria-live="polite"`.
+- 접근성: 실제 `<button>`, 시트 focus trap + ESC, 토스트 `aria-live="polite"`. 화면이 바뀌며 누른 요소가 사라지면(예: 투표 후 선택지) 포커스를 새 영역의 제목으로 옮긴다.
+- 화면에 보이는 문구는 컴포넌트에 직접 쓰지 않는다. 토스트·오류는 `shared/lib/messages.ts`, 화면 문구는 각 feature의 `copy.ts`에 두고 README 원문과 글자 단위로 맞춘다. README에 없는 문구는 표시해 두고 보고한다.
 
 ## MVP 범위
 

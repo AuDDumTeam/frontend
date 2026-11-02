@@ -40,6 +40,7 @@
   --tracking-logo: -0.06em;
   --tracking-head: -0.05em;
   --tracking-title: -0.045em;
+  --tracking-heading: -0.04em; /* 섹션 제목, 피드 본문 */
 
   --radius-*: initial;
   --radius-bar: 5px;
@@ -124,6 +125,18 @@
   }
 }
 
+/* 선택지 말풍선: 눌림 .14s, 선택 시 확대 .22s(spring), 색 .18s */
+@utility bubble-motion {
+  transition:
+    transform 0.14s ease,
+    scale 0.22s var(--ease-spring),
+    background-color 0.18s ease,
+    color 0.18s ease;
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
 /* 스크롤은 되지만 스크롤바는 숨김 */
 @utility scrollbar-none {
   scrollbar-width: none;
@@ -164,7 +177,12 @@
   .animate-grow {
     animation: none;
   }
-  .press:active {
+  .press:active,
+  .bubble-motion:active {
     transform: none;
+  }
+  /* 선택한 말풍선의 확대(scale 1.03)도 없앤다. 선택 여부는 색으로 구분된다. */
+  .bubble-motion {
+    scale: none;
   }
 }
