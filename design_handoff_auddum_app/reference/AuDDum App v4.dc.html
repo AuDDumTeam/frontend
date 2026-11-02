@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/innks/NanumSquareRound@master/nanumsquareround.min.css"><style>body{margin:0;background:#ebe3d3;word-break:keep-all}a{color:#9c4f22}a:hover{color:#2f2418}button,input,textarea{font-family:inherit}@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}@keyframes sheet{from{transform:translateY(100%)}to{transform:none}}@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes toast{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}@media (min-width:520px){#shell{max-width:393px!important;max-height:852px!important;border-radius:44px!important;box-shadow:0 0 0 10px #1d1610,0 40px 80px -40px rgba(60,40,20,.6)!important}}</style></helmet>
+<div style="height:100vh;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:#ebe3d3;padding:0;font-family:'NanumSquareRound',sans-serif;color:#2f2418">
+<div id="shell" style="position:relative;width:100%;max-width:440px;height:100%;background:#fbf4e6;display:flex;flex-direction:column;overflow:hidden">
+
+<div style="flex:none;height:52px;padding:0 14px;display:flex;align-items:center;gap:6px;margin-top:6px">
+<sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goBack }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;width:44px;height:44px;display:flex;align-items:center;justify-content:center;transition:transform .14s ease,background .14s ease,color .14s ease;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f2418" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="m15 5-7 7 7 7"/></svg></button></sc-if>
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><span style="padding-left:6px;font:800 24px NanumSquareRound;letter-spacing:-.06em">어떰?</span></sc-if>
+<span style="flex:1"></span>
+<sc-if value="{{ showMenu }}" hint-placeholder-val="{{ false }}"><button onClick="{{ openMenu }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;width:44px;height:44px;display:flex;align-items:center;justify-content:center;transition:transform .14s ease,background .14s ease,color .14s ease;"><svg width="24" height="24" viewBox="0 0 24 24" fill="#2f2418" style="display:block"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button></sc-if>
+<img src="yolk-happy.svg" alt="어떰이" style="width:34px;height:34px;object-fit:contain;margin-right:6px"/>
+</div>
+
+<sc-if value="{{ isSus }}" hint-placeholder-val="{{ false }}"><div style="flex:none;margin:0 20px 6px;padding:12px 16px;border-radius:14px;background:#f6dccf;font:700 12.5px/1.5 NanumSquareRound;color:#7a3419">이용이 정지된 계정이에요. 조회만 할 수 있어요</div></sc-if>
+
+<div style="flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;padding:4px 20px 28px;scrollbar-width:none">
+
+<sc-if value="{{ showTitle }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;padding:2px 0 14px"><div style="font:800 30px/1.3 NanumSquareRound;letter-spacing:-.05em;white-space:nowrap">{{ title }}</div><sc-if value="{{ subTitle }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;font:400 14px NanumSquareRound;color:#75644f">{{ subTitle }}</div></sc-if></div></sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;">
+<div style="font:800 28px/1.35 NanumSquareRound;letter-spacing:-.05em;padding:2px 0 22px">오늘은 어떤 고민에<br/>답장해볼까요?</div>
+<div style="font:800 16px NanumSquareRound;letter-spacing:-.04em;padding-bottom:12px">지금 인기</div>
+<div style="display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin:0 -20px 26px;padding:0 20px">
+<sc-for list="{{ hot }}" as="h" hint-placeholder-count="3"><button onClick="{{ h.open }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;flex:none;width:236px;height:168px;border-radius:28px;background:{{ h.bg }};padding:18px 20px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="font:800 13px NanumSquareRound;color:#9c4f22">0{{ h.rank }}</span><span style="margin-top:8px;font:800 17px/1.45 NanumSquareRound;letter-spacing:-.04em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ h.text }}</span><span style="flex:1"></span><span style="font:400 12.5px NanumSquareRound;color:#75644f">{{ h.total }}명 참여 중</span></button></sc-for>
+</div>
+<div style="font:800 16px NanumSquareRound;letter-spacing:-.04em;padding-bottom:12px">새 고민 <span style="font:400 12.5px NanumSquareRound;color:#75644f;letter-spacing:0">최신순</span></div>
+<div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 8px"><sc-for list="{{ fcats }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.pick }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;flex:none;height:36px;padding:0 15px;border-radius:999px;background:{{ c.bg }};color:{{ c.fg }};font:700 13.5px/36px NanumSquareRound;white-space:nowrap;transition:transform .14s ease,background .14s ease,color .14s ease;">{{ c.t }}</button></sc-for></div>
+<sc-if value="{{ feedEmpty }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:44px 0 20px;text-align:center"><img src="yolk-wonder.svg" alt="" style="width:120px;height:120px;object-fit:contain"/><div style="font:800 18px NanumSquareRound;letter-spacing:-.045em">아직 {{ fcat }} 고민이 없어요</div><button onClick="{{ clearF }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:8px;height:44px;padding:0 22px;border-radius:999px;background:#fff;font:800 13.5px/44px NanumSquareRound;color:#9c4f22">전체 보기</button></div></sc-if>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ feed }}" as="p" hint-placeholder-count="3">
+<button onClick="{{ p.open }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:10px;width:100%;padding:20px 0;border-bottom:1px solid #ecdfc8;text-align:left;transition:transform .14s ease,background .14s ease,color .14s ease;">
+<span style="display:flex;align-items:center;gap:7px;width:100%"><span style="font:800 13px NanumSquareRound;color:#9c4f22;white-space:nowrap">{{ p.cat }}</span><span style="font:400 13px NanumSquareRound;color:#75644f;white-space:nowrap">· {{ p.total }}명 참여</span><span style="flex:1"></span><sc-if value="{{ p.hasPill }}" hint-placeholder-val="{{ false }}"><span style="flex:none;height:24px;padding:0 10px;border-radius:999px;background:{{ p.pillBg }};color:{{ p.pillFg }};box-shadow:{{ p.pillRing }};font:800 11.5px/24px NanumSquareRound;white-space:nowrap">{{ p.pillT }}</span></sc-if></span>
+<span style="font:800 18px/1.45 NanumSquareRound;letter-spacing:-.04em;text-wrap:pretty">{{ p.text }}</span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{ canMore }}" hint-placeholder-val="{{ true }}"><button onClick="{{ loadMore }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;margin:20px auto 0;height:46px;padding:0 26px;border-radius:999px;background:#fff;font:800 13.5px/46px NanumSquareRound;color:#9c4f22;transition:transform .14s ease,background .14s ease,color .14s ease;">더 보기</button></sc-if>
+<sc-if value="{{ noMore }}" hint-placeholder-val="{{ false }}"><div style="margin-top:20px;text-align:center;font:400 12.5px NanumSquareRound;color:#a09079">마지막 고민이에요</div></sc-if>
+</div></sc-if>
+
+<sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;margin-top:70px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center"><img src="yolk-sad.svg" alt="" style="width:150px;height:150px;object-fit:contain"/><div style="font:800 22px NanumSquareRound;letter-spacing:-.045em">없거나 삭제된 고민이에요</div><div style="font:400 14px NanumSquareRound;color:#75644f">다른 고민에 답장해볼까요?</div><button onClick="{{ goHome }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:12px;width:170px;height:52px;border-radius:18px;background:#2f2418;color:#fbf4e6;text-align:center;font:800 15px/52px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">홈으로</button></div></sc-if>
+<sc-if value="{{ hasCur }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;">
+<div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+<div style="display:flex;align-items:center;gap:7px"><span style="font:800 13px NanumSquareRound;color:#9c4f22;white-space:nowrap">{{ cur.cat }}</span><span style="font:400 13px NanumSquareRound;color:#75644f;white-space:nowrap">· {{ cur.total }}명 참여</span><sc-if value="{{ cur.hasDl }}" hint-placeholder-val="{{ false }}"><span style="font:400 13px NanumSquareRound;color:#75644f;white-space:nowrap">· {{ cur.dl }}</span></sc-if></div>
+<div style="font:800 26px/1.4 NanumSquareRound;letter-spacing:-.045em;text-wrap:pretty">{{ cur.text }}</div></div>
+<sc-if value="{{ cur.closed }}" hint-placeholder-val="{{ false }}"><div style="margin-top:18px;padding:14px 18px;border-radius:18px;background:#f4e9d4;font:700 13px/1.6 NanumSquareRound;color:#75644f">마감된 고민이에요. 새로 참여할 수 없고 결과는 누구나 볼 수 있어요</div></sc-if>
+<sc-if value="{{ cur.showVote }}" hint-placeholder-val="{{ true }}">
+<div style="margin-top:22px;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+<div style="align-self:flex-start;font:400 13px NanumSquareRound;color:#75644f;padding-bottom:4px">하나 골라 답장하면 결과가 보여요</div>
+<sc-for list="{{ cur.opts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;max-width:88%;padding:15px 22px;border-radius:24px 24px 6px 24px;background:{{ o.bg }};color:{{ o.fg }};transform:{{ o.sc }};transform-origin:right center;text-align:left;font:700 15.5px/1.4 NanumSquareRound;opacity:{{ o.op }};transition:transform .22s cubic-bezier(.3,1.5,.5,1),background .18s ease,color .18s ease;">{{ o.t }}</button></sc-for>
+</div></sc-if>
+<sc-if value="{{ cur.showResult }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ cur.voted }}" hint-placeholder-val="{{ false }}"><div style="margin-top:20px;display:flex;justify-content:flex-end;align-items:center;gap:10px"><span style="font:400 12px NanumSquareRound;color:#75644f;white-space:nowrap">내 답장</span><span style="max-width:78%;padding:15px 22px;border-radius:24px 24px 6px 24px;background:#2f2418;color:#fbf4e6;font:700 15.5px/1.4 NanumSquareRound;animation:up .3s ease both">{{ cur.mine }}</span></div></sc-if>
+<div style="margin-top:30px;display:flex;flex-direction:column;gap:22px">
+<div style="font:800 18px NanumSquareRound;letter-spacing:-.04em">{{ cur.total }}명은 이렇게 답했어요</div>
+<sc-for list="{{ cur.opts }}" as="o" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;gap:9px"><div style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="flex:1;min-width:0;font:{{ o.w }} 15px NanumSquareRound;line-height:1.4">{{ o.t }}</span><sc-if value="{{ o.me }}" hint-placeholder-val="{{ false }}"><span style="flex:none;font:800 11px NanumSquareRound;color:#9c4f22;white-space:nowrap">내 답장</span></sc-if><span style="flex:none;font:800 22px NanumSquareRound;letter-spacing:-.04em;color:{{ o.pctC }}">{{ o.pct }}<span style="font:700 13px NanumSquareRound">%</span></span></div><div style="height:10px;border-radius:5px;background:#efe3cc;overflow:hidden"><div style="width:{{ o.pct }}%;height:100%;border-radius:5px;background:{{ o.fill }};transform-origin:left;animation:grow .7s cubic-bezier(.2,.8,.2,1) {{ o.delay }} both"></div></div></div></sc-for>
+<div style="font:400 12px NanumSquareRound;color:#a09079">제출한 답장은 바꿀 수 없어요</div>
+</div>
+</sc-if>
+</div></sc-if>
+</sc-if>
+
+<sc-if value="{{ isWrite }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;display:flex;flex-direction:column;gap:14px">
+<div style="background:#fff;border-radius:20px;padding:14px 20px 10px"><textarea placeholder="어떤 고민이에요? 한 줄로 적어요" value="{{ dText }}" onInput="{{ onText }}" style="box-sizing:border-box;width:100%;height:92px;border:0;outline:0;resize:none;background:transparent;font:700 15.5px/1.6 NanumSquareRound;color:#2f2418"></textarea><div style="text-align:right;font:400 11.5px NanumSquareRound;color:#a09079">{{ textLen }}/500</div></div>
+<div style="font:800 16px NanumSquareRound;letter-spacing:-.04em;padding-top:4px">카테고리 <span style="font:400 12.5px NanumSquareRound;color:#75644f;letter-spacing:0">하나만</span></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ catsW }}" as="c" hint-placeholder-count="7"><button onClick="{{ c.pick }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:38px;padding:0 16px;border-radius:999px;background:{{ c.bg }};color:{{ c.fg }};font:700 13.5px/38px NanumSquareRound;white-space:nowrap;transition:transform .14s ease,background .14s ease,color .14s ease;">{{ c.t }}</button></sc-for></div>
+<div style="font:800 16px NanumSquareRound;letter-spacing:-.04em;padding-top:4px">선택지 <span style="font:400 12.5px NanumSquareRound;color:#75644f;letter-spacing:0">2~5개 · 각 50자</span></div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ dOptsV }}" as="o" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:8px"><input placeholder="{{ o.ph }}" value="{{ o.v }}" maxlength="50" onInput="{{ o.input }}" style="box-sizing:border-box;flex:1;min-width:0;height:56px;border:0;outline:0;border-radius:18px;padding:0 20px;background:#fff;font:700 15px NanumSquareRound;color:#2f2418"/><sc-if value="{{ o.canDel }}" hint-placeholder-val="{{ false }}"><button onClick="{{ o.del }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;transition:transform .14s ease,background .14s ease,color .14s ease;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#75644f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="M6 6l12 12M18 6 6 18"/></svg></button></sc-if></div></sc-for>
+<sc-if value="{{ canAdd }}" hint-placeholder-val="{{ true }}"><button onClick="{{ addOpt }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:50px;border-radius:18px;border:2px dashed #e3cfa8;text-align:center;font:700 14px/46px NanumSquareRound;color:#9c4f22;transition:transform .14s ease,background .14s ease,color .14s ease;">+ 선택지 추가</button></sc-if>
+</div>
+<div style="font:800 16px NanumSquareRound;letter-spacing:-.04em;padding-top:4px">마감 <span style="font:400 12.5px NanumSquareRound;color:#75644f;letter-spacing:0">선택 · 없으면 계속 참여할 수 있어요</span></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ dls }}" as="d" hint-placeholder-count="4"><button onClick="{{ d.pick }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:38px;padding:0 16px;border-radius:999px;background:{{ d.bg }};color:{{ d.fg }};font:700 13.5px/38px NanumSquareRound;white-space:nowrap;transition:transform .14s ease,background .14s ease,color .14s ease;">{{ d.t }}</button></sc-for></div>
+<sc-for list="{{ errs }}" as="e" hint-placeholder-count="0"><div style="font:700 12.5px/1.5 NanumSquareRound;color:#b4442a">· {{ e }}</div></sc-for>
+<div style="font:400 12.5px/1.6 NanumSquareRound;color:#75644f">올리면 바로 공개돼요. 올린 뒤에는 수정할 수 없고 삭제만 할 수 있어요.</div>
+</div></sc-if>
+
+<sc-if value="{{ isMine }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;">
+<sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}"><div style="margin-bottom:12px;padding:14px 18px;border-radius:18px;background:#f4e9d4;font:700 13px/1.6 NanumSquareRound;color:#75644f">로그인하지 않으면 이 브라우저에서 한 참여만 보여요</div></sc-if>
+<sc-if value="{{ noMine }}" hint-placeholder-val="{{ false }}"><div style="margin-top:50px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><img src="yolk-wonder.svg" alt="" style="width:120px;height:120px;object-fit:contain"/><div style="font:800 18px/1.5 NanumSquareRound;letter-spacing:-.04em">아직 답장한 고민이 없어요</div><div style="font:400 14px NanumSquareRound;color:#75644f">홈에서 하나 골라볼까요?</div></div></sc-if>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ mine }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.open }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:12px;width:100%;padding:20px 0;border-bottom:1px solid #ecdfc8;text-align:left;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="font:800 17px/1.45 NanumSquareRound;letter-spacing:-.04em;text-wrap:pretty">{{ m.text }}</span><span style="display:flex;align-items:center;gap:8px;width:100%;min-width:0"><span style="flex:none;font:400 12px NanumSquareRound;color:#75644f;white-space:nowrap">내 답장</span><span style="min-width:0;height:30px;padding:0 14px;border-radius:999px;background:#2f2418;color:#fbf4e6;font:700 13px/30px NanumSquareRound;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.mine }}</span><span style="flex:1"></span><span style="flex:none;font:800 18px NanumSquareRound;letter-spacing:-.04em;color:#9c4f22">{{ m.pct }}%</span></span></button></sc-for></div>
+</div></sc-if>
+
+<sc-if value="{{ isPosted }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;">
+<sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}"><div style="margin-top:50px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center"><img src="yolk-wonder.svg" alt="" style="width:120px;height:120px;object-fit:contain"/><div style="font:800 18px/1.5 NanumSquareRound;letter-spacing:-.04em">고민을 올리려면<br/>로그인이 필요해요</div><button onClick="{{ askLogin }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:8px;width:220px;height:52px;border-radius:18px;background:#fee500;text-align:center;font:800 15px/52px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">카카오로 시작하기</button></div></sc-if>
+<sc-if value="{{ noPosted }}" hint-placeholder-val="{{ false }}"><div style="margin-top:50px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><img src="yolk-wonder.svg" alt="" style="width:120px;height:120px;object-fit:contain"/><div style="font:800 18px/1.5 NanumSquareRound;letter-spacing:-.04em">아직 올린 고민이 없어요</div><div style="font:400 14px NanumSquareRound;color:#75644f">가운데 + 버튼으로 첫 고민을 올려봐요</div></div></sc-if>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ posted }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.open }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:10px;width:100%;padding:20px 0;border-bottom:1px solid #ecdfc8;text-align:left;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="display:flex;align-items:center;gap:7px;width:100%"><span style="font:800 13px NanumSquareRound;color:#9c4f22;white-space:nowrap">{{ m.cat }}</span><span style="font:400 13px NanumSquareRound;color:#75644f;white-space:nowrap">· {{ m.total }}명 참여</span><span style="flex:1"></span><span style="font:800 12px NanumSquareRound;color:#75644f;white-space:nowrap">{{ m.state }}</span></span><span style="font:800 17px/1.45 NanumSquareRound;letter-spacing:-.04em;text-wrap:pretty">{{ m.text }}</span></button></sc-for></div>
+</div></sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;">
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 0 18px">
+<div style="width:112px;height:112px;border-radius:50%;background:#fdebcb;display:flex;align-items:center;justify-content:center"><img src="yolk-happy.svg" alt="" style="width:88px;height:88px;object-fit:contain"/></div>
+<div style="font:800 24px NanumSquareRound;letter-spacing:-.05em">{{ nick }}</div>
+<div style="font:400 13.5px NanumSquareRound;color:#75644f">{{ roleLine }}</div>
+</div>
+<sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}"><div style="background:#fdebcb;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px"><div style="font:800 20px/1.4 NanumSquareRound;letter-spacing:-.045em">로그인하면 내 고민을<br/>올릴 수 있어요</div><button onClick="{{ askLogin }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:54px;border-radius:18px;background:#fee500;text-align:center;font:800 15px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">카카오로 시작하기</button><div style="font:400 12.5px NanumSquareRound;color:#75644f">투표는 로그인 없이도 할 수 있어요</div></div></sc-if>
+<sc-if value="{{ notGuest }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:14px 0;border-top:1px solid #ecdfc8;border-bottom:1px solid #ecdfc8">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="3"><div style="text-align:center"><div style="font:800 26px NanumSquareRound;letter-spacing:-.04em">{{ s.n }}</div><div style="font:400 12px NanumSquareRound;color:#75644f">{{ s.l }}</div></div></sc-for></div></sc-if>
+<sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goAdmin }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:16px;height:56px;padding:0 22px;border-radius:18px;background:#2f2418;color:#fbf4e6;font:800 14px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;"><span>관리자 · 신고 검토</span><span>{{ pendingCount }}건 대기 ›</span></button></sc-if>
+<div style="margin-top:8px;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;height:60px;border-bottom:1px solid #ecdfc8;font:700 16px NanumSquareRound"><span style="flex:1">이용약관 · 개인정보 처리방침</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a09079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="m9 5 7 7-7 7"/></svg></div>
+<sc-if value="{{ notGuest }}" hint-placeholder-val="{{ true }}"><button onClick="{{ doLogout }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;width:100%;height:60px;border-bottom:1px solid #ecdfc8;font:700 16px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="flex:1">로그아웃</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a09079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="m9 5 7 7-7 7"/></svg></button><button onClick="{{ askWithdraw }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;width:100%;height:60px;border-bottom:1px solid #ecdfc8;font:700 16px NanumSquareRound;color:#b4442a;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="flex:1">탈퇴하기</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a09079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="m9 5 7 7-7 7"/></svg></button></sc-if>
+</div>
+<div style="margin-top:24px;padding:16px 18px;border-radius:20px;background:#f4e9d4"><div style="font:800 12.5px NanumSquareRound;color:#75644f">프로토타입 보기 전환</div><div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ roles }}" as="r" hint-placeholder-count="4"><button onClick="{{ r.pick }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:34px;padding:0 14px;border-radius:999px;background:{{ r.bg }};color:{{ r.fg }};font:700 12.5px/34px NanumSquareRound;white-space:nowrap;transition:transform .14s ease,background .14s ease,color .14s ease;">{{ r.t }}</button></sc-for></div></div>
+</div></sc-if>
+
+<sc-if value="{{ isAdminList }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;">
+<sc-if value="{{ noReports }}" hint-placeholder-val="{{ false }}"><div style="margin-top:40px;text-align:center;font:700 15px NanumSquareRound;color:#75644f">접수된 신고가 없어요</div></sc-if>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ reportsV }}" as="r" hint-placeholder-count="2"><button onClick="{{ r.open }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:8px;width:100%;padding:20px 0;border-bottom:1px solid #ecdfc8;text-align:left;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="display:flex;width:100%;font:800 13px NanumSquareRound"><span style="color:#9c4f22">{{ r.reason }}</span><span style="flex:1"></span><span style="color:{{ r.stFg }}">{{ r.status }}</span></span><span style="font:800 16px/1.5 NanumSquareRound;letter-spacing:-.04em">{{ r.text }}</span></button></sc-for></div>
+</div></sc-if>
+
+<sc-if value="{{ isAdminDetail }}" hint-placeholder-val="{{ false }}"><sc-if value="{{ hasRep }}" hint-placeholder-val="{{ false }}"><div style="animation:up .34s cubic-bezier(.2,.8,.2,1) both;">
+<div style="background:#fff;border-radius:22px;padding:20px 22px"><div style="font:800 13px NanumSquareRound;color:#9c4f22">신고 사유 · {{ rep.reason }}</div><sc-if value="{{ rep.hasEtc }}" hint-placeholder-val="{{ false }}"><div style="margin-top:4px;font:400 13px NanumSquareRound;color:#75644f">“{{ rep.etc }}”</div></sc-if><div style="margin-top:12px;font:400 12.5px NanumSquareRound;color:#75644f">대상 고민 · {{ rep.cat }} · {{ rep.total }}명 참여</div><div style="margin-top:6px;font:800 17px/1.5 NanumSquareRound;letter-spacing:-.04em">{{ rep.text }}</div></div>
+<div style="margin-top:14px;font:400 12.5px/1.6 NanumSquareRound;color:#75644f">신고 건수만으로 자동 처리되지 않아요. 상태 <b style="color:#2f2418">{{ rep.status }}</b></div>
+<sc-if value="{{ rep.pending }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ toggleBan }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;margin-top:14px;font:700 13.5px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="width:24px;height:24px;border-radius:8px;background:{{ banBg }};box-shadow:inset 0 0 0 1.5px #dccaa6;text-align:center;font:800 14px/24px NanumSquareRound">{{ banMark }}</span>작성자 이용 정지도 함께</button>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:8px"><button onClick="{{ actDismiss }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:54px;border-radius:18px;background:#fff;text-align:center;font:800 14.5px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">기각 · 투표 유지</button><button onClick="{{ actHide }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:54px;border-radius:18px;background:#f6d3b8;text-align:center;font:800 14.5px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">숨김 (복구 가능)</button><button onClick="{{ actDelete }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;height:54px;border-radius:18px;background:#2f2418;color:#fbf4e6;text-align:center;font:800 14.5px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">삭제 (복구 불가)</button></div></sc-if>
+<sc-if value="{{ rep.done }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;padding:14px 18px;border-radius:18px;background:#f4e9d4;font:700 13px/1.6 NanumSquareRound;color:#75644f">이미 처리된 신고예요. {{ rep.history }}</div></sc-if>
+</div></sc-if></sc-if>
+
+</div>
+
+<sc-if value="{{ footVote }}" hint-placeholder-val="{{ false }}"><div style="flex:none;padding:10px 20px 28px;display:flex;flex-direction:column;gap:12px;animation:up .3s ease both"><button onClick="{{ submitVote }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:58px;border-radius:20px;background:{{ voteBg }};color:{{ voteFg }};text-align:center;font:800 16px/58px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">이 답장 보내기</button><div style="text-align:center;font:400 12.5px NanumSquareRound;color:#a09079">제출한 답장은 바꿀 수 없어요</div></div></sc-if>
+<sc-if value="{{ footWrite }}" hint-placeholder-val="{{ false }}"><div style="flex:none;padding:10px 20px 28px"><button onClick="{{ submitWrite }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:58px;border-radius:20px;background:{{ writeBg }};color:{{ writeFg }};text-align:center;font:800 16px/58px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">고민 올리기</button></div></sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:20px;right:20px;bottom:112px;padding:15px 20px;border-radius:18px;background:#2f2418;color:#fbf4e6;font:700 14px/1.5 NanumSquareRound;z-index:15;display:flex;align-items:center;gap:10px;animation:toast .3s cubic-bezier(.2,.8,.2,1) both"><span style="flex:none;width:22px;height:22px;border-radius:50%;background:#ee9461;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2f2418" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span>{{ toast }}</span></div></sc-if>
+
+<sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}"><div style="flex:none;padding:6px 14px 18px"><div style="height:68px;border-radius:34px;background:#fff;box-shadow:0 8px 28px -14px rgba(90,55,20,.35);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;text-align:center">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.go }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:center;height:68px;white-space:nowrap;transition:transform .14s ease,background .14s ease,color .14s ease;"><sc-if value="{{ t.plus }}" hint-placeholder-val="{{ false }}"><span style="width:58px;height:58px;margin-top:-20px;border-radius:50%;background:#ee9461;border:5px solid #fbf4e6;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f2418" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="M12 5v14M5 12h14"/></svg></span></sc-if><sc-if value="{{ t.label }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-direction:column;align-items:center;gap:3px;font:700 11px NanumSquareRound;color:{{ t.fg }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{ t.fg }}" stroke-width="{{ t.sw }}" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="{{ t.d }}"/></svg>{{ t.t }}</span></sc-if></button></sc-for>
+</div></div></sc-if>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(47,36,24,.42);z-index:20;display:flex;align-items:flex-end;animation:fade .2s ease both">
+<div onClick="{{ stop }}" style="width:100%;box-sizing:border-box;background:#fbf4e6;border-radius:32px 32px 0 0;padding:12px 24px 34px;max-height:88%;overflow-y:auto;animation:sheet .3s cubic-bezier(.2,.8,.2,1) both">
+<div style="width:40px;height:5px;border-radius:3px;background:#dccaa6;margin:0 auto 18px"></div>
+
+<sc-if value="{{ sh.login }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:center"><img src="yolk-wonder.svg" alt="" style="width:96px;height:96px;object-fit:contain"/></div><div style="margin-top:8px;text-align:center;font:800 24px/1.4 NanumSquareRound;letter-spacing:-.045em">로그인하고<br/>내 고민을 올려봐요</div><div style="margin-top:8px;text-align:center;font:400 14px/1.6 NanumSquareRound;color:#75644f">투표와 결과 보기는 로그인 없이도 할 수 있어요</div><button onClick="{{ doKakao }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;margin-top:22px;height:58px;border-radius:20px;background:#fee500;text-align:center;font:800 16px/58px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">카카오로 시작하기</button><button onClick="{{ closeSheet }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;margin-top:6px;height:46px;text-align:center;font:700 14px/46px NanumSquareRound;color:#75644f">나중에 할게요</button></sc-if>
+
+<sc-if value="{{ sh.terms }}" hint-placeholder-val="{{ false }}"><div style="font:800 24px/1.4 NanumSquareRound;letter-spacing:-.045em">처음이시네요!<br/>약관만 확인할게요</div><div style="margin-top:18px;display:flex;flex-direction:column;gap:8px"><button onClick="{{ tog1 }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;height:56px;padding:0 20px;border-radius:18px;background:#fff;font:700 15px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="width:22px;height:22px;border-radius:50%;background:{{ ag1Bg }};display:flex;align-items:center;justify-content:center;transition:background .16s"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>(필수) 이용약관</button><button onClick="{{ tog2 }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;height:56px;padding:0 20px;border-radius:18px;background:#fff;font:700 15px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="width:22px;height:22px;border-radius:50%;background:{{ ag2Bg }};display:flex;align-items:center;justify-content:center;transition:background .16s"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;display:block"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>(필수) 개인정보 수집·이용</button></div><div style="margin-top:20px"><button onClick="{{ doAgree }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:58px;border-radius:20px;background:{{ agreeBg }};color:{{ agreeFg }};text-align:center;font:800 16px/58px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">동의하고 시작하기</button></div></sc-if>
+
+<sc-if value="{{ sh.menu }}" hint-placeholder-val="{{ false }}"><sc-if value="{{ isMinePost }}" hint-placeholder-val="{{ false }}"><button onClick="{{ askDelete }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:58px;border-radius:18px;background:#fff;text-align:center;font:700 15.5px/58px NanumSquareRound;color:#b4442a;transition:transform .14s ease,background .14s ease,color .14s ease;">내 고민 삭제하기</button></sc-if><sc-if value="{{ notMinePost }}" hint-placeholder-val="{{ true }}"><button onClick="{{ askReport }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:58px;border-radius:18px;background:#fff;text-align:center;font:700 15.5px/58px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">이 고민 신고하기</button></sc-if><button onClick="{{ closeSheet }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;margin-top:6px;height:46px;text-align:center;font:700 14px/46px NanumSquareRound;color:#75644f">닫기</button></sc-if>
+
+<sc-if value="{{ sh.del }}" hint-placeholder-val="{{ false }}"><div style="font:800 22px/1.4 NanumSquareRound;letter-spacing:-.045em">이 고민을 삭제할까요?</div><div style="margin-top:8px;font:400 14px/1.65 NanumSquareRound;color:#75644f">삭제하면 복구할 수 없어요. 참여 기록은 보존돼요.</div><div style="margin-top:20px;display:flex;gap:10px"><button onClick="{{ closeSheet }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;height:54px;border-radius:18px;background:#fff;text-align:center;font:800 15px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">취소</button><button onClick="{{ doDelete }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;height:54px;border-radius:18px;background:#b4442a;color:#fff;text-align:center;font:800 15px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">삭제</button></div></sc-if>
+
+<sc-if value="{{ sh.report }}" hint-placeholder-val="{{ false }}"><div style="font:800 22px NanumSquareRound;letter-spacing:-.045em">신고 사유를 골라주세요</div><div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><sc-for list="{{ reasons }}" as="r" hint-placeholder-count="5"><button onClick="{{ r.pick }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;height:54px;padding:0 20px;border-radius:18px;background:#fff;box-shadow:{{ r.ring }};font:700 15px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;"><span style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:{{ r.dot }}"></span>{{ r.t }}</button></sc-for></div><sc-if value="{{ etcOpen }}" hint-placeholder-val="{{ false }}"><input placeholder="짧게 적어주세요 (100자)" maxlength="100" value="{{ retc }}" onInput="{{ onEtc }}" style="box-sizing:border-box;width:100%;margin-top:8px;height:54px;border:0;outline:0;border-radius:18px;padding:0 20px;background:#fff;font:700 15px NanumSquareRound;color:#2f2418"/></sc-if><div style="margin-top:16px"><button onClick="{{ doReport }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:58px;border-radius:20px;background:{{ repBg }};color:{{ repFg }};text-align:center;font:800 16px/58px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">신고하기</button></div><div style="margin-top:10px;text-align:center;font:400 12.5px NanumSquareRound;color:#a09079">관리자가 검토해요. 처리 결과는 따로 알려드리지 않아요</div></sc-if>
+
+<sc-if value="{{ sh.withdraw }}" hint-placeholder-val="{{ false }}"><div style="font:800 22px/1.4 NanumSquareRound;letter-spacing:-.045em">정말 탈퇴할까요?</div><div style="margin-top:8px;font:400 14px/1.7 NanumSquareRound;color:#75644f">올린 고민은 작성자 없이 남고, 투표 기록은 보존돼요. 같은 카카오 계정으로 다시 가입하면 새 계정으로 시작해요.</div><div style="margin-top:20px;display:flex;gap:10px"><button onClick="{{ closeSheet }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;height:54px;border-radius:18px;background:#fff;text-align:center;font:800 15px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">취소</button><button onClick="{{ doWithdraw }}" style-active="transform:scale(.97)" style="all:unset;box-sizing:border-box;cursor:pointer;flex:1;height:54px;border-radius:18px;background:#b4442a;color:#fff;text-align:center;font:800 15px/54px NanumSquareRound;transition:transform .14s ease,background .14s ease,color .14s ease;">탈퇴</button></div></sc-if>
+
+</div></div>
+</sc-if>
+
+</div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    role: 'member', scr: 'home', fcat: '전체', openId: null, my: { 2: 1 }, sel: null, sheet: '', toast: '', more: false,
+    posts: [
+      { id: 7, cat: '연락', text: '답장이 늦는 건 관심이 없다는 뜻일까요?', opts: ['그런 편이에요', '바빠서일 수도 있어요', '직접 물어봐요'], v: [88, 140, 64], mine: true },
+      { id: 6, cat: '연애 가치관', text: '연락은 하루 한 번이면 충분할까요?', opts: ['충분해요', '부족해요', '사람마다 달라요'], v: [77, 190, 50], closed: true },
+      { id: 5, cat: '소개팅', text: '첫 만남 카페비, 더치페이 어때요?', opts: ['더치페이', '번갈아 계산', '먼저 제안한 사람이 계산'], v: [120, 88, 45], dl: '곧 마감', soon: true },
+      { id: 4, cat: '연애 중', text: '기념일 선물 예산, 얼마가 적당해요?', opts: ['5만원 이하', '10만원 안팎', '마음이 중요, 금액 무관'], v: [98, 321, 140] },
+      { id: 3, cat: '이별', text: '헤어진 지 한 달 된 전애인이 “잘 지내?” 하고 연락 왔어요.', opts: ['답장한다', '읽고 무시', '차단'], v: [154, 389, 97] },
+      { id: 2, cat: '연애 중', text: '남친이 휴대폰 비밀번호를 알려달라는데, 줘도 될까요?', opts: ['연인이면 공유 OK', '각자의 영역, 비공개', '서로 합의하면 OK'], v: [201, 356, 302] },
+      { id: 1, cat: '썸', text: '썸남이 읽씹하고 6시간 뒤에 ‘자다 깼어ㅋㅋ’라고 답장했어요. 어떰?', opts: ['그냥 자연스럽게 답장', '나도 6시간 뒤에 답장', '관심 없는 거임, 정리'], v: [412, 268, 187] }
+    ],
+    extra: [
+      { id: 101, cat: '썸', text: '썸 단계에서 먼저 고백해도 될까요?', opts: ['해도 돼요', '조금 더 기다려요', '분위기 봐서'], v: [140, 90, 60] },
+      { id: 102, cat: '기타', text: '친구의 전애인을 좋아하게 됐어요.', opts: ['말한다', '숨긴다', '마음을 접는다'], v: [40, 120, 70] }
+    ],
+    reports: [{ id: 1, pid: 3, reason: '광고·도배', etc: '', status: '대기', history: '' }],
+    reported: {}, rsel: '', retc: '', dText: '', dCat: '', dOpts: ['', ''], dDl: '없음', tried: false, lastPost: 0, lastText: '', nid: 20,
+    ag1: false, ag2: false, openRid: null, banToo: false
+  };
+  renderVals() {
+    const S = this.state, set = (o) => this.setState(o), K = ['A', 'B', 'C', 'D', 'E'], ICON = { home: 'M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z', mine: 'M5 5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z M8.5 11.5l2.5 2.5 4.5-5', posted: 'M6 3h8l5 5v13H6z M14 3v5h5 M9 13h7 M9 17h5', profile: 'M8 8a4 4 0 1 0 8 0a4 4 0 1 0-8 0 M4 21c0-4 3.6-6 8-6s8 2 8 6' };
+    const isG = S.role === 'guest', isSus = S.role === 'suspended', isAdm = S.role === 'admin';
+    const toast = (t) => { set({ toast: t }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); };
+    const login = () => set({ sheet: 'login' });
+    const go = (scr) => () => set({ scr, openId: null, sel: null, sheet: '' });
+    const open = (id) => () => set({ scr: 'detail', openId: id, sel: null });
+    const live = S.posts.filter(p => !p.hidden && !p.deleted).concat(S.more ? S.extra : []);
+    const votesOf = (p) => p.v.map((n, i) => n + (S.my[p.id] === i ? 1 : 0));
+    const mk = (p) => { const v = votesOf(p), t = v.reduce((a, b) => a + b, 0), m = S.my[p.id]; return { v, t, m, voted: m !== undefined }; };
+    const pool = S.fcat === '전체' ? live : S.posts.filter(p => !p.hidden && !p.deleted).concat(S.extra).filter(p => p.cat === S.fcat);
+    const feed = pool.map((p) => { const x = mk(p); const pillT = p.closed ? '마감' : x.voted ? '참여 완료' : p.soon ? p.dl : ''; return { cat: p.cat, text: p.text, total: x.t, hasPill: !!pillT, pillT, pillBg: p.closed ? '#efe3cc' : x.voted ? '#f6d3b8' : 'transparent', pillFg: p.closed ? '#75644f' : x.voted ? '#2f2418' : '#9c4f22', pillRing: !p.closed && !x.voted && p.soon ? 'inset 0 0 0 1.5px #ee9461' : 'none', open: open(p.id) }; });
+    const hot = live.filter(p => !p.closed).map(p => ({ p, t: mk(p).t })).sort((a, b) => b.t - a.t).slice(0, 3).map((o, i) => ({ rank: i + 1, text: o.p.text, total: o.t, bg: ['#fdebcb', '#f6d3b8', '#f4e9d4'][i], open: open(o.p.id) }));
+    const base = S.posts.concat(S.extra).find(p => p.id === S.openId);
+    const visible = base && !base.deleted && (!base.hidden || base.mine);
+    let cur = { opts: [] };
+    const meta = (p) => ({ cat: p.cat, text: p.text, closed: !!p.closed, hasDl: !!p.dl && !p.closed, dl: p.dl || '' });
+    if (visible) {
+      const x = mk(base), closed = !!base.closed, showResult = x.voted || closed;
+      cur = { ...meta(base), total: x.t, voted: x.voted, showResult, showVote: !showResult, mine: x.voted ? base.opts[x.m] : '',
+        opts: base.opts.map((t, i) => ({ t, k: K[i], pct: Math.round(x.v[i] / x.t * 100), me: x.m === i, delay: (i * 90) + 'ms', w: x.m === i ? 800 : 700, fill: x.m === i ? '#ee9461' : '#dcc9a5', pctC: x.m === i ? '#9c4f22' : '#2f2418',
+          bg: S.sel === i ? '#2f2418' : '#fdebcb', fg: S.sel === i ? '#fbf4e6' : '#2f2418', sc: S.sel === i ? 'scale(1.03)' : 'scale(1)', op: isSus ? .5 : 1, pick: () => { if (isSus) return toast('이용이 정지된 계정이에요 (MEMBER_SUSPENDED)'); set({ sel: i }); } })) };
+    }
+    const submitVote = () => {
+      if (isSus) return toast('이용이 정지된 계정이라 참여할 수 없어요');
+      if (S.sel === null) return toast('답장을 하나 골라주세요');
+      if (base.soon && !base.closed) { return set({ posts: S.posts.map(p => p.id === base.id ? { ...p, closed: true, soon: false } : p), sel: null }, () => toast('방금 마감됐어요 · 새 참여는 막혀요 (POLL_CLOSED)')); }
+      set({ my: { ...S.my, [base.id]: S.sel }, sel: null }); toast('답장이 전달됐어요');
+    };
+    const canVote = S.sel !== null && !isSus;
+    const mine = live.filter(p => S.my[p.id] !== undefined).map(p => { const x = mk(p); return { text: p.text, mine: p.opts[x.m], pct: Math.round(x.v[x.m] / x.t * 100), open: open(p.id) }; });
+    const posted = S.posts.filter(p => p.mine && !p.deleted).map(p => ({ cat: p.cat, text: p.text, total: mk(p).t, state: p.hidden ? '숨김' : p.closed ? '마감' : '공개', open: open(p.id) }));
+    // write
+    const cleaned = S.dOpts.map(o => o.trim());
+    const filled = cleaned.filter(Boolean);
+    const errs = [];
+    if (!S.dText.trim()) errs.push('고민을 적어주세요 (1~500자)');
+    if (!S.dCat) errs.push('카테고리를 하나 골라주세요');
+    if (filled.length < 2) errs.push('선택지는 2개 이상 필요해요');
+    if (new Set(filled).size !== filled.length) errs.push('같은 선택지가 있어요');
+    const okW = errs.length === 0 && !isSus;
+    const submitWrite = () => {
+      if (isG) return login();
+      if (isSus) return toast('이용이 정지된 계정이라 올릴 수 없어요');
+      if (errs.length) return set({ tried: true });
+      if (Date.now() - S.lastPost < 30000) return toast('조금 있다가 올려주세요 · 연속 작성 간격 제한 (429)');
+      if (S.dText.trim() === S.lastText) return toast('직전과 같은 고민이에요 (409)');
+      const dls = { '없음': '', '1시간': '1시간 뒤 마감', '24시간': '24시간 뒤 마감', '3일': '3일 뒤 마감' };
+      const id = S.nid;
+      set({ posts: [{ id, cat: S.dCat, text: S.dText.trim(), opts: filled, v: filled.map(() => 0), mine: true, dl: dls[S.dDl] }, ...S.posts], nid: id + 1, dText: '', dCat: '', dOpts: ['', ''], dDl: '없음', tried: false, lastPost: Date.now(), lastText: S.dText.trim(), scr: 'detail', openId: id, sel: null });
+      toast('올렸어요 · 바로 공개됐어요');
+    };
+    // report / admin
+    const reasonsL = ['욕설·혐오 표현', '성희롱', '개인정보 노출', '광고·도배', '기타'];
+    const pend = S.reports.filter(r => r.status === '대기').length;
+    const tp = (pid) => S.posts.find(p => p.id === pid) || { cat: '', text: '(삭제됨)', v: [0] };
+    const rp = S.reports.find(r => r.id === S.openRid);
+    const act = (kind) => () => {
+      const hist = { 기각: '기각 · 투표 유지', 숨김: '숨김 처리', 삭제: '삭제 처리' }[kind] + (S.banToo ? ' · 작성자 이용 정지' : '');
+      set({ reports: S.reports.map(r => r.id === rp.id ? { ...r, status: kind === '기각' ? '기각' : kind + ' 처리', history: hist + ' · 처리자 관리자 · 방금' } : r),
+        posts: S.posts.map(p => p.id === rp.pid ? (kind === '숨김' ? { ...p, hidden: true } : kind === '삭제' ? { ...p, deleted: true } : p) : p), banToo: false });
+      toast('처리했어요 · 이력이 남았어요');
+    };
+    const rpv = rp ? (() => { const t = tp(rp.pid); return { reason: rp.reason, etc: rp.etc, hasEtc: !!rp.etc, cat: t.cat, text: t.text, total: t.v.reduce((a, b) => a + b, 0), status: rp.status, pending: rp.status === '대기', done: rp.status !== '대기', history: rp.history }; })() : {};
+    const titles = { home: '어떰?', detail: '', write: '고민 쓰기', mine: '참여한 고민', posted: '내가 올린 고민', profile: '프로필', admin: '신고 검토', adminDetail: '신고 상세' };
+    const tabKey = S.scr === 'detail' ? 'home' : S.scr === 'admin' || S.scr === 'adminDetail' ? 'profile' : S.scr;
+    const tabs = [['home', '홈'], ['mine', '참여'], ['write', '+'], ['posted', '내 고민'], ['profile', '프로필']].map(([k, t]) => ({ t, go: k === 'write' ? () => (isG ? login() : set({ scr: 'write', openId: null, sheet: '' })) : go(k), plus: k === 'write', label: k !== 'write', d: ICON[k] || '', sw: tabKey === k ? 2 : 1.7, fg: tabKey === k ? '#2f2418' : '#a09079' }));
+    const mp = !!base && !!base.mine;
+    const sh = { login: S.sheet === 'login', terms: S.sheet === 'terms', menu: S.sheet === 'menu', del: S.sheet === 'del', report: S.sheet === 'report', withdraw: S.sheet === 'withdraw' };
+    const roleLine = { guest: '로그인하지 않았어요', member: '카카오 계정으로 로그인됨', suspended: '이용 정지 · 조회만 가능', admin: '관리자 권한' }[S.role];
+    return {
+      title: titles[S.scr], showTitle: !['home', 'detail'].includes(S.scr), subTitle: S.scr === 'mine' ? '내가 답장한 ' + Object.keys(S.my).length + '개' : '', showBack: ['detail', 'adminDetail', 'write'].includes(S.scr), goBack: () => set({ scr: S.scr === 'adminDetail' ? 'admin' : 'home', openId: null, sel: null }), showTabs: !['detail', 'write'].includes(S.scr), footVote: S.scr === 'detail' && !!visible && !!cur.showVote, footWrite: S.scr === 'write',
+      showMenu: S.scr === 'detail' && !!visible, openMenu: () => set({ sheet: 'menu' }),
+      isSus, isGuest: isG, notGuest: !isG, isAdmin: isAdm,
+      isHome: S.scr === 'home', isDetail: S.scr === 'detail', isWrite: S.scr === 'write', isMine: S.scr === 'mine', isPosted: S.scr === 'posted', isProfile: S.scr === 'profile', isAdminList: S.scr === 'admin', isAdminDetail: S.scr === 'adminDetail',
+      feed, hot, fcat: S.fcat, feedEmpty: feed.length === 0, clearF: () => set({ fcat: '전체' }), fcats: ['전체', '썸', '소개팅', '연락', '연애 중', '이별', '연애 가치관', '기타'].map(c => ({ t: c, bg: S.fcat === c ? '#2f2418' : '#fff', fg: S.fcat === c ? '#fbf4e6' : '#2f2418', pick: () => set({ fcat: c }) })), canMore: !S.more && S.fcat === '전체', noMore: S.more && S.fcat === '전체' && feed.length > 0, loadMore: () => set({ more: true }), goHome: go('home'),
+      notFound: S.scr === 'detail' && !visible, hasCur: !!visible, cur, submitVote, voteBg: canVote ? '#2f2418' : '#efe3cc', voteFg: canVote ? '#fbf4e6' : '#75644f',
+      mine, noMine: mine.length === 0, posted, noPosted: !isG && posted.length === 0, askLogin: login,
+      dText: S.dText, textLen: S.dText.length, onText: (e) => set({ dText: e.target.value.replace(/\n/g, '').slice(0, 500) }),
+      catsW: ['썸', '소개팅', '연락', '연애 중', '이별', '연애 가치관', '기타'].map(t => ({ t, bg: S.dCat === t ? '#2f2418' : '#fff', fg: S.dCat === t ? '#fbf4e6' : '#2f2418', pick: () => set({ dCat: t }) })),
+      dOptsV: S.dOpts.map((v, i) => ({ v, ph: '선택지 ' + K[i], canDel: S.dOpts.length > 2, input: (e) => { const d = S.dOpts.slice(); d[i] = e.target.value; set({ dOpts: d }); }, del: () => set({ dOpts: S.dOpts.filter((_, j) => j !== i) }) })),
+      canAdd: S.dOpts.length < 5, addOpt: () => set({ dOpts: [...S.dOpts, ''] }),
+      dls: ['없음', '1시간', '24시간', '3일'].map(t => ({ t, bg: S.dDl === t ? '#2f2418' : '#fff', fg: S.dDl === t ? '#fbf4e6' : '#2f2418', pick: () => set({ dDl: t }) })),
+      errs: S.tried ? errs : [], submitWrite, writeBg: okW ? '#2f2418' : '#efe3cc', writeFg: okW ? '#fbf4e6' : '#75644f',
+      nick: isG ? '비회원' : '말랑한 노른자', roleLine, stats: [{ n: Object.keys(S.my).length, l: '내 답장' }, { n: S.posts.filter(p => p.mine && !p.deleted).length, l: '올린 고민' }, { n: 3, l: '연속 참여' }],
+      goAdmin: go('admin'), pendingCount: pend,
+      doLogout: () => { set({ role: 'guest' }); toast('로그아웃했어요'); }, askWithdraw: () => set({ sheet: 'withdraw' }),
+      doWithdraw: () => { set({ role: 'guest', sheet: '' }); toast('탈퇴했어요'); },
+      roles: [['guest', '비회원'], ['member', '회원'], ['suspended', '정지 회원'], ['admin', '관리자']].map(([k, t]) => ({ t, bg: S.role === k ? '#2f2418' : '#fff', fg: S.role === k ? '#fbf4e6' : '#2f2418', pick: () => set({ role: k }) })),
+      reportsV: S.reports.map(r => ({ reason: r.reason, status: r.status, stFg: r.status === '대기' ? '#b4442a' : '#75644f', text: tp(r.pid).text, open: () => set({ scr: 'adminDetail', openRid: r.id, banToo: false }) })), noReports: S.reports.length === 0,
+      hasRep: !!rp, rep: rpv, actDismiss: act('기각'), actHide: act('숨김'), actDelete: act('삭제'), toggleBan: () => set({ banToo: !S.banToo }), banBg: S.banToo ? '#ee9461' : '#fff', banMark: S.banToo ? '✓' : '',
+      tabs, hasToast: !!S.toast, toast: S.toast,
+      sheetOpen: !!S.sheet, sh, closeSheet: () => set({ sheet: '' }), stop: (e) => e.stopPropagation(),
+      doKakao: () => set({ sheet: 'terms', ag1: false, ag2: false }), tog1: () => set({ ag1: !S.ag1 }), tog2: () => set({ ag2: !S.ag2 }),
+      ag1Bg: S.ag1 ? '#ee9461' : '#efe3cc', ag2Bg: S.ag2 ? '#ee9461' : '#efe3cc', agreeBg: S.ag1 && S.ag2 ? '#2f2418' : '#efe3cc', agreeFg: S.ag1 && S.ag2 ? '#fbf4e6' : '#75644f',
+      doAgree: () => { if (!(S.ag1 && S.ag2)) return; set({ role: 'member', sheet: '' }); toast('가입했어요 · 환영해요!'); },
+      isMinePost: mp, notMinePost: !mp, askDelete: () => set({ sheet: 'del' }),
+      doDelete: () => { if (isSus) { set({ sheet: '' }); return toast('이용이 정지된 계정이에요'); } set({ posts: S.posts.map(p => p.id === base.id ? { ...p, deleted: true } : p), sheet: '', scr: 'home', openId: null }); toast('삭제했어요 · 복구할 수 없어요'); },
+      askReport: () => { if (isSus) { set({ sheet: '' }); return toast('이용이 정지된 계정은 신고할 수 없어요'); } set({ sheet: 'report', rsel: '', retc: '' }); },
+      reasons: reasonsL.map(t => ({ t, ring: S.rsel === t ? 'inset 0 0 0 2px #ee9461' : 'none', dot: S.rsel === t ? 'inset 0 0 0 6px #ee9461' : 'inset 0 0 0 2px #dccaa6', pick: () => set({ rsel: t }) })),
+      etcOpen: S.rsel === '기타', retc: S.retc, onEtc: (e) => set({ retc: e.target.value }),
+      repBg: S.rsel ? '#2f2418' : '#efe3cc', repFg: S.rsel ? '#fbf4e6' : '#75644f',
+      doReport: () => {
+        if (!S.rsel) return toast('신고 사유를 골라주세요');
+        if (S.reported[base.id]) { set({ sheet: '' }); return toast('이미 신고한 고민이에요 (409)'); }
+        set({ reports: [...S.reports, { id: S.reports.length + 1, pid: base.id, reason: S.rsel, etc: S.rsel === '기타' ? S.retc : '', status: '대기', history: '' }], reported: { ...S.reported, [base.id]: true }, sheet: '' });
+        toast('신고가 접수됐어요 · 관리자가 검토해요');
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
