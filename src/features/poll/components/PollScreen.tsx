@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { useMe } from "@/features/auth";
 import { ApiError } from "@/shared/api/fetcher";
 import { FALLBACK_MESSAGES } from "@/shared/lib/messages";
@@ -10,6 +12,7 @@ import { SuspendBanner } from "@/shared/ui/SuspendBanner";
 
 import { usePoll, usePollVote } from "../api/queries";
 import { PollDetailView } from "./PollDetailView";
+import { PollMenu } from "./PollMenu";
 import { PollNotFound } from "./PollNotFound";
 
 /** 400(잘못된 id)과 404 는 모두 "없는 고민"으로 보여준다. */
@@ -23,10 +26,12 @@ export function PollScreen({ pollId }: { pollId: string }) {
   const { vote, isPending } = usePollVote(pollId);
 
   const poll = query.data;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const canOpenMenu = poll !== undefined && poll.status !== "DELETED";
 
   return (
     <>
-      <Header backHref="/" />
+      <Header backHref="/" onMenu={canOpenMenu ? () => setMenuOpen(true) : undefined} />
       {role === "suspended" && <SuspendBanner />}
 
       {poll && poll.status !== "DELETED" ? (
@@ -50,6 +55,15 @@ export function PollScreen({ pollId }: { pollId: string }) {
             <ErrorState onRetry={() => void query.refetch()} />
           )}
         </Screen>
+      )}
+      {poll && (
+        <PollMenu
+          pollId={poll.id}
+          mine={poll.mine}
+          role={role}
+          open={menuOpen}
+          onOpenChange={setMenuOpen}
+        />
       )}
     </>
   );

@@ -23,6 +23,7 @@ const poll = (overrides: Partial<Poll> = {}): Poll => ({
   ],
   myChoice: null,
   result: null,
+  mine: false,
   ...overrides,
 });
 

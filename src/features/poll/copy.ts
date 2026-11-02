@@ -16,6 +16,20 @@ export const POLL_COPY = {
   },
 } as const;
 
+/** ⋯ 메뉴와 삭제 확인 시트 (README 바텀시트 3·4) */
+export const MENU_COPY = {
+  title: "메뉴", // README 에 없음: 시트 제목은 스크린리더용으로만 쓰고 화면에는 보이지 않는다
+  delete: "내 고민 삭제하기",
+  report: "이 고민 신고하기",
+  close: "닫기",
+  confirm: {
+    title: "이 고민을 삭제할까요?",
+    body: "삭제하면 복구할 수 없어요. 참여 기록은 보존돼요.",
+    cancel: "취소",
+    confirm: "삭제",
+  },
+} as const;
+
 export const resultHeading = (total: number) => `${total}명은 이렇게 답했어요`;
 
 /** 피드 행과 상세 메타가 같은 표기를 쓴다 */

@@ -29,4 +29,9 @@ export type Poll = {
   /** 내가 고른 선택지의 position. 미참여면 null */
   myChoice: number | null;
   result: PollResult | null;
+  /**
+   * 내가 올린 고민인지. 상세 응답에 작성자 여부가 없어(백엔드 추가 예정) 지금은 없으면 false 다.
+   * false 로 두면 삭제 대신 신고 메뉴가 보이는 안전한 쪽이다.
+   */
+  mine: boolean;
 };

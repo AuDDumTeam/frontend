@@ -26,7 +26,9 @@ export type MockPoll = {
   closesAt: string | null;
   createdAt: string;
   /** 관리자가 숨긴 고민은 피드에 나오지 않고 작성자만 본다. 기본은 공개 */
-  status?: "PUBLIC" | "HIDDEN";
+  status?: "PUBLIC" | "HIDDEN" | "DELETED";
+  /** 작성자 id. 신고 상세에서 작성자를 정지하는 데 쓴다 (백엔드가 추가하기로 한 필드의 가정) */
+  authorId?: number;
   /** 내가 올린 고민 */
   mine?: boolean;
 };
@@ -72,6 +74,7 @@ const SEED: Omit<MockPoll, "createdAt">[] = [
     question: "기념일 선물 예산, 얼마가 적당해요?",
     options: ["5만원 이하", "10만원 안팎", "마음이 중요, 금액 무관"],
     votes: [98, 321, 140],
+    authorId: 103,
     closed: false,
     closesAt: iso(3 * HOUR),
   },
@@ -91,6 +94,7 @@ const SEED: Omit<MockPoll, "createdAt">[] = [
     question: "남친이 휴대폰 비밀번호를 알려달라는데, 줘도 될까요?",
     options: ["연인이면 공유 OK", "각자의 영역, 비공개", "서로 합의하면 OK"],
     votes: [201, 356, 302],
+    authorId: 101,
     closed: false,
     closesAt: null,
   },
@@ -100,6 +104,7 @@ const SEED: Omit<MockPoll, "createdAt">[] = [
     question: "썸남이 읽씹하고 6시간 뒤에 ‘자다 깼어ㅋㅋ’라고 답장했어요. 어떰?",
     options: ["그냥 자연스럽게 답장", "나도 6시간 뒤에 답장", "관심 없는 거임, 정리"],
     votes: [412, 268, 187],
+    authorId: 102,
     closed: false,
     closesAt: null,
   },
@@ -138,16 +143,82 @@ export const createInitialPolls = (): MockPoll[] =>
     createdAt: iso(-index * MIN),
   }));
 
+export type MockReportStatus = "PENDING" | "RESOLVED" | "DISMISSED";
+export type MockReason =
+  "ABUSE_HATE" | "SEXUAL_HARASSMENT" | "PERSONAL_INFO" | "SPAM" | "ETC";
+
+export type MockReport = {
+  id: number;
+  pollId: string;
+  reason: MockReason;
+  detail: string | null;
+  status: MockReportStatus;
+  createdAt: string;
+  handledAt: string | null;
+  handledBy: number | null;
+  actions: {
+    id: number;
+    actionType: string;
+    adminId: number;
+    createdAt: string;
+    reason: string;
+  }[];
+};
+
 export type MockState = {
   polls: MockPoll[];
   /** pollId → 내가 고른 선택지의 position */
   myVotes: Record<string, number>;
   /** 마지막으로 고민을 올린 시각(ms). 연속 작성 간격 제한(429) 재현용 */
   lastCreatedAt: number | null;
+  reports: MockReport[];
+  /** 내가 신고한 고민(중복 신고 409 재현용) */
+  reported: string[];
+  /** 정지된 작성자 id */
+  suspendedAuthors: number[];
 };
 
 export const createMockState = (): MockState => ({
   polls: createInitialPolls(),
   myVotes: {},
   lastCreatedAt: null,
+  reports: createInitialReports(),
+  reported: [],
+  suspendedAuthors: [],
 });
+
+const seedReport = (
+  id: number,
+  pollId: string,
+  reason: MockReason,
+  detail: string | null,
+  status: MockReportStatus,
+): MockReport => ({
+  id,
+  pollId,
+  reason,
+  detail,
+  status,
+  createdAt: iso(-(id + 1) * 10 * MIN),
+  handledAt: status === "PENDING" ? null : iso(-5 * MIN),
+  handledBy: status === "PENDING" ? null : 1,
+  actions:
+    status === "PENDING"
+      ? []
+      : [
+          {
+            id: 1,
+            actionType: "DISMISS",
+            adminId: 1,
+            createdAt: iso(-5 * MIN),
+            reason: "문제 없음",
+          },
+        ],
+});
+
+/** 대기 2건 + 기각 1건. (작성자 id 는 db 의 authorId 와 맞춘다) */
+const createInitialReports = (): MockReport[] => [
+  seedReport(1, "p2", "ABUSE_HATE", null, "PENDING"),
+  seedReport(2, "p1", "ETC", "광고 같아요", "PENDING"),
+  seedReport(3, "p4", "SPAM", null, "DISMISSED"),
+];

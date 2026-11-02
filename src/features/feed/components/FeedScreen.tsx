@@ -7,9 +7,9 @@ import { useMe } from "@/features/auth";
 import { isPollCategory, type PollCategory } from "@/features/poll";
 import { getErrorMessage } from "@/shared/lib/error-messages";
 import { Screen } from "@/shared/ui/AppShell";
-import { Button } from "@/shared/ui/Button";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { Header } from "@/shared/ui/Header";
+import { LoadMore } from "@/shared/ui/LoadMore";
 import { SuspendBanner } from "@/shared/ui/SuspendBanner";
 import { toast } from "@/shared/ui/toast/toast-store";
 
@@ -76,16 +76,10 @@ export function FeedScreen() {
               ))}
             </div>
             {feed.hasNextPage ? (
-              <div className="mt-5 flex justify-center">
-                <Button
-                  size="pill"
-                  variant="soft"
-                  disabled={feed.isFetchingNextPage}
-                  onClick={() => void loadMore()}
-                >
-                  {FEED_COPY.more}
-                </Button>
-              </div>
+              <LoadMore
+                loading={feed.isFetchingNextPage}
+                onClick={() => void loadMore()}
+              />
             ) : (
               <p className="text-faint mt-5 text-center text-[12.5px]">{FEED_COPY.end}</p>
             )}

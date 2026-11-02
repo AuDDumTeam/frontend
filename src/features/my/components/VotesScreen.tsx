@@ -8,6 +8,7 @@ import { Screen } from "@/shared/ui/AppShell";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { Header } from "@/shared/ui/Header";
+import { LoadMore } from "@/shared/ui/LoadMore";
 import { ScreenTitle } from "@/shared/ui/ScreenTitle";
 import { SuspendBanner } from "@/shared/ui/SuspendBanner";
 import { toast } from "@/shared/ui/toast/toast-store";
@@ -15,7 +16,6 @@ import { toast } from "@/shared/ui/toast/toast-store";
 import { useMyVotes } from "../api/queries";
 import { MY_COPY, percentLabel, votesSubtitle } from "../copy";
 import type { MyVoteItem } from "../model/items";
-import { LoadMore } from "./LoadMore";
 import { MyListSkeleton } from "./MyListSkeleton";
 
 function VoteRow({ item }: { item: MyVoteItem }) {
@@ -84,11 +84,12 @@ export function VotesScreen() {
                 <VoteRow key={item.id} item={item} />
               ))}
             </div>
-            <LoadMore
-              hasNext={query.hasNextPage}
-              loading={query.isFetchingNextPage}
-              onClick={() => void loadMore()}
-            />
+            {query.hasNextPage && (
+              <LoadMore
+                loading={query.isFetchingNextPage}
+                onClick={() => void loadMore()}
+              />
+            )}
           </>
         )}
       </Screen>

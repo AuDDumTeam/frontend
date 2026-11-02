@@ -20,6 +20,14 @@ const base: PollDetailResponse = {
 };
 
 describe("toPoll", () => {
+  it("작성자 여부(mine)가 없으면 내 글이 아닌 것으로 본다", () => {
+    expect(toPoll(base)?.mine).toBe(false);
+    expect(toPoll({ ...base, mine: true } as PollDetailResponse)?.mine).toBe(true);
+    expect(toPoll({ ...base, mine: "yes" } as unknown as PollDetailResponse)?.mine).toBe(
+      false,
+    );
+  });
+
   it("선택지를 position 순으로 정렬한다", () => {
     expect(toPoll(base)?.options.map((o) => o.content)).toEqual(["A", "B"]);
   });

@@ -3,12 +3,15 @@ import { ApiError, NetworkError } from "@/shared/api/fetcher";
 import { FALLBACK_MESSAGES, MESSAGES } from "./messages";
 
 /** 같은 서버 코드라도 어떤 동작에서 났는지에 따라 문구가 다르다. (예: MEMBER_SUSPENDED) */
-export type ErrorContext = "read" | "vote" | "write" | "delete" | "report" | "account";
+export type ErrorContext =
+  "read" | "vote" | "write" | "delete" | "report" | "account" | "admin";
 
 const BY_CONTEXT: Record<ErrorContext, Partial<Record<string, string>>> = {
   read: {},
   /** 로그아웃·탈퇴. 서버 메시지나 공통 문구를 쓴다 */
   account: {},
+  /** 신고 검토. 서버 메시지(이미 처리된 신고 등)를 그대로 쓴다 */
+  admin: {},
   vote: {
     MEMBER_SUSPENDED: MESSAGES.vote.suspended,
     POLL_CLOSED: MESSAGES.vote.closed,

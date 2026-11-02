@@ -1,6 +1,7 @@
 import { delay, http, HttpResponse } from "msw";
 
-import type { MockPoll, MockState } from "./db";
+import { createAdminHandlers } from "./admin-handlers";
+import type { MockPoll, MockReport, MockState } from "./db";
 
 /** 백엔드 규칙: 직전 생성 후 30초 미만이면 429 */
 const CREATE_INTERVAL_MS = 30_000;
@@ -89,7 +90,7 @@ export function createHandlers(
       await delay(latencyMs);
       if (getRole() === "guest")
         return error(401, "UNAUTHENTICATED", "로그인이 필요합니다.");
-      const posted = state.polls.filter((poll) => poll.mine);
+      const posted = state.polls.filter((poll) => poll.mine && poll.status !== "DELETED");
       return pageOf(request, posted, (poll) => ({
         ...toSummary(poll),
         status: poll.status ?? "PUBLIC",
@@ -100,7 +101,9 @@ export function createHandlers(
       await delay(latencyMs);
       const category = new URL(request.url).searchParams.get("category");
       const visible = state.polls.filter(
-        (poll) => poll.status !== "HIDDEN" && (!category || poll.category === category),
+        (poll) =>
+          (poll.status ?? "PUBLIC") === "PUBLIC" &&
+          (!category || poll.category === category),
       );
       return pageOf(request, visible, toSummary);
     }),
@@ -171,18 +174,91 @@ export function createHandlers(
     http.get("/api/v1/polls/:pollId", async ({ params }) => {
       await delay(latencyMs);
       const poll = findPoll(params.pollId);
-      if (!poll) return error(404, "POLL_NOT_FOUND", "존재하지 않는 투표입니다.");
+      // 삭제된 고민은 없는 것과 같고, 숨긴 고민은 작성자와 관리자만 본다.
+      const visible =
+        poll &&
+        poll.status !== "DELETED" &&
+        (poll.status !== "HIDDEN" || poll.mine || getRole() === "admin");
+      if (!poll || !visible) {
+        return error(404, "POLL_NOT_FOUND", "존재하지 않는 투표입니다.");
+      }
 
       const myChoice = state.myVotes[poll.id] ?? null;
       const showResult = poll.closed || myChoice !== null;
       return HttpResponse.json({
         ...toSummary(poll),
         status: poll.status ?? "PUBLIC",
+        mine: poll.mine ?? false, // 백엔드가 추가하기로 한 필드
         options: poll.options.map((content, position) => ({ content, position })),
         myChoice,
         result: showResult ? toResult(poll) : null,
       });
     }),
+
+    http.delete("/api/v1/polls/:pollId", async ({ params }) => {
+      await delay(latencyMs);
+      const role = getRole();
+      if (role === "guest") return error(401, "UNAUTHENTICATED", "로그인이 필요합니다.");
+      if (role === "suspended") {
+        return error(403, "MEMBER_SUSPENDED", "정지된 회원은 이 요청을 할 수 없습니다.");
+      }
+      const poll = findPoll(params.pollId);
+      if (!poll || poll.status === "DELETED") {
+        return error(404, "POLL_NOT_FOUND", "존재하지 않는 투표입니다.");
+      }
+      if (!poll.mine) return error(403, "FORBIDDEN", "권한이 없습니다.");
+      if (poll.status === "HIDDEN") {
+        return error(
+          403,
+          "POLL_NOT_DELETABLE",
+          "관리자가 숨긴 투표는 삭제할 수 없습니다.",
+        );
+      }
+      poll.status = "DELETED";
+      return new HttpResponse(null, { status: 204 });
+    }),
+
+    http.post("/api/v1/polls/:pollId/reports", async ({ params, request }) => {
+      await delay(latencyMs);
+      if (getRole() === "suspended") {
+        return error(403, "MEMBER_SUSPENDED", "정지된 회원은 이 요청을 할 수 없습니다.");
+      }
+      const body = (await request.json().catch(() => null)) as {
+        reason?: MockReport["reason"];
+        detail?: string | null;
+      } | null;
+      const reasons = ["ABUSE_HATE", "SEXUAL_HARASSMENT", "PERSONAL_INFO", "SPAM", "ETC"];
+      const detail = body?.detail?.trim() ?? "";
+      if (
+        !body?.reason ||
+        !reasons.includes(body.reason) ||
+        (body.reason === "ETC" && !detail)
+      ) {
+        return error(400, "VALIDATION_FAILED", "요청 값이 올바르지 않습니다.");
+      }
+      const poll = findPoll(params.pollId);
+      if (!poll || poll.status === "DELETED") {
+        return error(404, "POLL_NOT_FOUND", "존재하지 않는 투표입니다.");
+      }
+      if (state.reported.includes(poll.id)) {
+        return error(409, "REPORT_ALREADY_SUBMITTED", "이미 신고한 투표입니다.");
+      }
+      state.reported.push(poll.id);
+      state.reports.push({
+        id: Math.max(0, ...state.reports.map((r) => r.id)) + 1,
+        pollId: poll.id,
+        reason: body.reason,
+        detail: body.reason === "ETC" ? detail : null,
+        status: "PENDING",
+        createdAt: new Date().toISOString(),
+        handledAt: null,
+        handledBy: null,
+        actions: [],
+      });
+      return new HttpResponse(null, { status: 201 });
+    }),
+
+    ...createAdminHandlers(state, getRole, latencyMs),
 
     http.post("/api/v1/polls/:pollId/votes", async ({ params, request }) => {
       await delay(latencyMs);

@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
+import { ADMIN_COPY, pendingCountLabel, usePendingCount } from "@/features/admin";
 import { LoginButton, useLogout, useMe, type Role } from "@/features/auth";
 import { Screen } from "@/shared/ui/AppShell";
 import { Header } from "@/shared/ui/Header";
@@ -43,6 +45,7 @@ export function ProfileScreen() {
   const posts = useMyPosts(isMember);
   const { profile } = MY_COPY;
   const shownRole: Role = role ?? "guest";
+  const pending = usePendingCount(role === "admin");
 
   return (
     <>
@@ -79,6 +82,18 @@ export function ProfileScreen() {
             <Stat value={votes.data?.pages[0]?.totalCount} label={profile.stats.votes} />
             <Stat value={posts.data?.pages[0]?.totalCount} label={profile.stats.posts} />
           </div>
+        )}
+
+        {role === "admin" && (
+          <Link
+            href="/admin"
+            className="press bg-ink text-bg rounded-control mt-4 flex h-14 w-full items-center justify-between px-5.5 text-[14px] font-extrabold"
+          >
+            <span>{ADMIN_COPY.profileBar}</span>
+            {pending.count !== undefined && (
+              <span>{pendingCountLabel(pending.count, pending.more)}</span>
+            )}
+          </Link>
         )}
 
         {isMember && (

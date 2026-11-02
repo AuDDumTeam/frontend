@@ -26,6 +26,9 @@ export function toPollResult(
   return { total: dto.total, counts };
 }
 
+/** 작성자 여부는 백엔드가 추가하기로 한 필드라 생성 타입에 없다. 없으면 내 글이 아닌 것으로 본다. */
+const toMine = (dto: object): boolean => "mine" in dto && dto.mine === true;
+
 export function toPoll(dto: PollDetailResponse): Poll | null {
   if (!dto.id || !dto.question) return null;
 
@@ -59,6 +62,7 @@ export function toPoll(dto: PollDetailResponse): Poll | null {
     options,
     myChoice,
     result,
+    mine: toMine(dto),
   };
 }
 

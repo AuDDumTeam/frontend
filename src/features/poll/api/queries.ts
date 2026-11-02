@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 import { meKey } from "@/features/auth";
-import { castVote, getPoll } from "@/shared/api/generated/auddum";
+import { castVote, deletePoll, getPoll } from "@/shared/api/generated/auddum";
 import { FEED_KEY_PREFIX, MY_KEY_PREFIX, POLL_KEY_PREFIX } from "@/shared/api/query-keys";
 import { getErrorMessage, hasErrorCode } from "@/shared/lib/error-messages";
 import { MESSAGES } from "@/shared/lib/messages";
@@ -75,4 +76,40 @@ export function usePollVote(pollId: string) {
   });
 
   return { vote: mutation.mutate, isPending: mutation.isPending };
+}
+
+/** 내 고민 삭제. 성공하면 홈으로 돌아간다. (삭제된 고민의 상세는 더 볼 수 없다) */
+export function useDeletePoll(pollId: string, onDone: () => void) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const mutation = useMutation({
+    mutationFn: () => deletePoll(pollId),
+    onSuccess: () => {
+      toast(MESSAGES.delete.done);
+      onDone();
+      // 화면에 아직 마운트된 상세는 지우지 않고(재요청·깜빡임 방지) 낡음 표시만 한다.
+      void queryClient.invalidateQueries({
+        queryKey: pollKeys.detail(pollId),
+        refetchType: "none",
+      });
+      void queryClient.invalidateQueries({ queryKey: pollKeys.feed });
+      void queryClient.invalidateQueries({ queryKey: MY_KEY_PREFIX });
+      router.replace("/");
+    },
+    onError: (error) => {
+      toast(getErrorMessage(error, "delete"));
+      if (hasErrorCode(error, "MEMBER_SUSPENDED")) {
+        void queryClient.invalidateQueries({ queryKey: meKey });
+      }
+      // 관리자가 숨겼거나 이미 지워진 고민이면 화면이 낡았으니 다시 읽는다.
+      // 다시 눌러도 같은 오류만 나오므로 확인 시트는 닫는다.
+      if (hasErrorCode(error, "POLL_NOT_DELETABLE", "POLL_NOT_FOUND")) {
+        void queryClient.invalidateQueries({ queryKey: pollKeys.detail(pollId) });
+        onDone();
+      }
+    },
+  });
+
+  return { remove: mutation.mutate, isPending: mutation.isPending };
 }

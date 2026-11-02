@@ -11,8 +11,14 @@ const TABS = [
   { href: "/", label: "홈", icon: "home" },
   { href: "/mine", label: "참여", icon: "mine" },
   { href: "/posted", label: "내 고민", icon: "posted" },
-  { href: "/me", label: "프로필", icon: "profile" },
-] as const satisfies readonly { href: string; label: string; icon: IconName }[];
+  { href: "/me", label: "프로필", icon: "profile", also: "/admin" },
+] as const satisfies readonly {
+  href: string;
+  label: string;
+  icon: IconName;
+  /** 이 경로 아래 화면에서도 같은 탭을 활성으로 본다 (예: 관리자 화면은 프로필 탭) */
+  also?: string;
+}[];
 
 function TabLink({ tab, active }: { tab: (typeof TABS)[number]; active: boolean }) {
   return (
@@ -37,10 +43,11 @@ function TabLink({ tab, active }: { tab: (typeof TABS)[number]; active: boolean 
 export function TabBar({ onPlus }: { onPlus: () => void }) {
   const pathname = usePathname();
   // 경로 구간 단위로 비교한다. ("/me" 가 "/memo" 에서 활성으로 잡히지 않도록)
-  const isActive = (href: string) =>
-    href === "/"
+  const under = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
+  const isActive = (tab: { href: string; also?: string }) =>
+    tab.href === "/"
       ? pathname === "/"
-      : pathname === href || pathname.startsWith(`${href}/`);
+      : under(tab.href) || (!!tab.also && under(tab.also));
   const [home, mine, posted, profile] = TABS;
 
   return (
@@ -49,8 +56,8 @@ export function TabBar({ onPlus }: { onPlus: () => void }) {
       className="animate-cta flex-none px-3.5 pt-1.5 pb-[max(1.125rem,env(safe-area-inset-bottom))]"
     >
       <div className="rounded-tabbar bg-surface shadow-tabbar grid h-17 grid-cols-5 items-center">
-        <TabLink tab={home} active={isActive(home.href)} />
-        <TabLink tab={mine} active={isActive(mine.href)} />
+        <TabLink tab={home} active={isActive(home)} />
+        <TabLink tab={mine} active={isActive(mine)} />
         <button
           type="button"
           onClick={onPlus}
@@ -59,8 +66,8 @@ export function TabBar({ onPlus }: { onPlus: () => void }) {
         >
           <Icon name="plus" size={26} strokeWidth={2.4} />
         </button>
-        <TabLink tab={posted} active={isActive(posted.href)} />
-        <TabLink tab={profile} active={isActive(profile.href)} />
+        <TabLink tab={posted} active={isActive(posted)} />
+        <TabLink tab={profile} active={isActive(profile)} />
       </div>
     </nav>
   );

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { TabBarContainer } from "./TabBarContainer";
 
@@ -7,7 +7,10 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      <TabBarContainer />
+      {/* 탭바가 현재 경로(usePathname)를 읽는다. 동적 경로(admin/[reportId])에서는 Suspense 안에 있어야 한다 */}
+      <Suspense>
+        <TabBarContainer />
+      </Suspense>
     </>
   );
 }

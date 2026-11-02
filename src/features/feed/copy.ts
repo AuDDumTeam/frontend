@@ -8,7 +8,6 @@ export const FEED_COPY = {
   sort: "최신순",
   categoryGroup: "카테고리",
   all: "전체",
-  more: "더 보기",
   end: "마지막 고민이에요",
   showAll: "전체 보기",
   /** README 에 없음: 필터 없이 비어 있는 경우 */

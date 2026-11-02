@@ -43,6 +43,7 @@ describe("applyVote", () => {
     ],
     myChoice: null,
     result: null,
+    mine: false,
   };
 
   it("내 선택과 결과를 반영하고 참여 인원을 맞춘다", () => {
