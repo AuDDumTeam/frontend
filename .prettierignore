@@ -1,0 +1,8 @@
+.next
+node_modules
+pnpm-lock.yaml
+design_handoff_auddum_app
+.claude
+CLAUDE.md
+src/shared/api/generated
+public/mockServiceWorker.js
