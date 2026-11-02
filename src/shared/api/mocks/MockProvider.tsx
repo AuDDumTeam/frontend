@@ -3,7 +3,7 @@
 import { onlineManager } from "@tanstack/react-query";
 import { useEffect, type ReactNode } from "react";
 
-const MOCKING_ENABLED = process.env.NEXT_PUBLIC_API_MOCKING === "enabled";
+import { MOCKING_ENABLED } from "./enabled";
 
 // 워커가 준비되기 전에 나가는 요청이 실제 서버로 새지 않도록, 준비될 때까지 쿼리를 대기시킨다.
 // 화면을 비우지 않으므로 서버 렌더링과 로딩 UI는 그대로 동작한다.

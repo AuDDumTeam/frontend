@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AuthSheets } from "@/features/auth";
 import { nanumSquareRound } from "@/shared/styles/fonts";
 import { AppShell } from "@/shared/ui/AppShell";
 import { ToastViewport } from "@/shared/ui/toast/ToastViewport";
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <Providers>
           <AppShell>{children}</AppShell>
+          <AuthSheets />
           <ToastViewport />
         </Providers>
       </body>

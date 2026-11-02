@@ -20,3 +20,8 @@ export function readMockRole(): MockRole {
   const stored = window.sessionStorage.getItem(STORAGE_KEY);
   return isMockRole(stored) ? stored : "member";
 }
+
+/** 목 모드에서 가입(약관 동의)을 마쳤을 때 회원으로 바꾼다. 실제 앱에서는 서버가 쿠키로 처리한다. */
+export function writeMockRole(role: MockRole) {
+  window.sessionStorage.setItem(STORAGE_KEY, role);
+}

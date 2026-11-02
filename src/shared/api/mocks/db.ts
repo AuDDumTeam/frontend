@@ -120,9 +120,12 @@ export type MockState = {
   polls: MockPoll[];
   /** pollId → 내가 고른 선택지의 position */
   myVotes: Record<string, number>;
+  /** 마지막으로 고민을 올린 시각(ms). 연속 작성 간격 제한(429) 재현용 */
+  lastCreatedAt: number | null;
 };
 
 export const createMockState = (): MockState => ({
   polls: createInitialPolls(),
   myVotes: {},
+  lastCreatedAt: null,
 });

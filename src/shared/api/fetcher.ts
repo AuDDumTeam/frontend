@@ -23,6 +23,21 @@ export class NetworkError extends Error {
   }
 }
 
+/**
+ * Content-Type 이 JSON 일 때만 JSON 으로 읽고, 그 외에는 원문 문자열을 쓴다.
+ * (예: POST /polls 는 공개 ID 를 따옴표 없는 문자열로 내려주고, 프록시 오류는 HTML 로 온다.
+ * 값을 보고 추측하면 숫자처럼 보이는 ID 가 숫자로 바뀐다)
+ */
+export function parseBody(text: string, contentType: string | null): unknown {
+  if (!text) return undefined;
+  if (!contentType?.includes("json")) return text;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
 export const customFetch = async <T>(
@@ -39,7 +54,7 @@ export const customFetch = async <T>(
   }
 
   const text = res.status === 204 ? "" : await res.text();
-  const body: unknown = text ? JSON.parse(text) : undefined;
+  const body = parseBody(text, res.headers.get("content-type"));
 
   if (!res.ok) {
     const err = (body ?? {}) as { code?: string; message?: string };

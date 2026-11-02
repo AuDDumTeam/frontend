@@ -2,6 +2,9 @@ import { delay, http, HttpResponse } from "msw";
 
 import type { MockPoll, MockState } from "./db";
 
+/** 백엔드 규칙: 직전 생성 후 30초 미만이면 429 */
+const CREATE_INTERVAL_MS = 30_000;
+
 export type MockRole = "guest" | "member" | "suspended" | "admin";
 
 const error = (status: number, code: string, message: string) =>
@@ -66,6 +69,68 @@ export function createHandlers(
       return HttpResponse.json({
         items: page.map(toSummary),
         nextCursor: next < filtered.length ? String(next) : null,
+      });
+    }),
+
+    http.post("/api/v1/polls", async ({ request }) => {
+      await delay(latencyMs);
+      const role = getRole();
+      if (role === "guest") return error(401, "UNAUTHENTICATED", "로그인이 필요합니다.");
+      if (role === "suspended") {
+        return error(403, "MEMBER_SUSPENDED", "정지된 회원은 이 요청을 할 수 없습니다.");
+      }
+
+      const body = (await request.json().catch(() => null)) as {
+        category?: MockPoll["category"];
+        question?: string;
+        options?: string[];
+        closesAt?: string | null;
+      } | null;
+      const question = body?.question?.trim() ?? "";
+      const options = (body?.options ?? []).map((option) => option.trim());
+      const valid =
+        body?.category &&
+        question.length >= 1 &&
+        question.length <= 500 &&
+        !question.includes("\n") &&
+        options.length >= 2 &&
+        options.length <= 5 &&
+        options.every((option) => option.length >= 1 && option.length <= 50) &&
+        new Set(options).size === options.length;
+      if (!body || !valid) {
+        return error(400, "VALIDATION_FAILED", "요청 값이 올바르지 않습니다.");
+      }
+
+      if (state.polls[0]?.question === question) {
+        return error(409, "DUPLICATE_POLL", "직전에 만든 투표와 같은 질문입니다.");
+      }
+      if (
+        state.lastCreatedAt !== null &&
+        Date.now() - state.lastCreatedAt < CREATE_INTERVAL_MS
+      ) {
+        return error(
+          429,
+          "POLL_RATE_LIMITED",
+          "투표를 너무 자주 만들 수 없습니다. 잠시 후 다시 시도해 주세요.",
+        );
+      }
+
+      const id = `n${state.polls.length + 1}`;
+      state.polls.unshift({
+        id,
+        category: body.category as MockPoll["category"],
+        question,
+        options,
+        votes: options.map(() => 0),
+        closed: false,
+        closesAt: body.closesAt ?? null,
+        createdAt: new Date().toISOString(),
+      });
+      state.lastCreatedAt = Date.now();
+      // 실제 서버처럼 본문은 JSON 이 아닌 공개 ID 문자열이다.
+      return new HttpResponse(id, {
+        status: 201,
+        headers: { "Content-Type": "text/plain", Location: `/api/v1/polls/${id}` },
       });
     }),
 

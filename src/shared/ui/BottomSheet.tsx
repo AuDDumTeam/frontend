@@ -34,7 +34,10 @@ export function BottomSheet({
           aria-describedby={undefined}
           className="rounded-t-sheet bg-bg animate-sheet fixed inset-x-0 bottom-0 z-50 mx-auto max-h-[88dvh] w-full max-w-110 overflow-y-auto px-6 pt-3 pb-8.5 outline-none"
         >
-          <div className="bg-handle rounded-pill mx-auto mb-4 h-1.25 w-10" aria-hidden />
+          <div
+            className="bg-handle rounded-pill mx-auto mb-4.5 h-1.25 w-10"
+            aria-hidden
+          />
           <Dialog.Title
             className={cn(
               "tracking-title leading-[1.4] font-extrabold",
