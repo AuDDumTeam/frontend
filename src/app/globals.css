@@ -1,26 +1,170 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * 디자인 토큰 (design_handoff_auddum_app/README.md "Design Tokens").
+ * Tailwind 기본 색·굵기·라운드·그림자는 비워서, 여기 정의한 토큰만 쓸 수 있게 한다.
+ */
+@theme {
+  --color-*: initial;
+  --color-bg: #fbf4e6; /* 앱 배경, 시트 */
+  --color-bg-outer: #ebe3d3; /* 앱 바깥 */
+  --color-ink: #2f2418; /* 본문, 선택/활성 배경 */
+  --color-accent: #ee9461; /* + 버튼, 내 막대, 체크 */
+  --color-accent-text: #9c4f22; /* 카테고리, 링크성 텍스트, 내 퍼센트 */
+  --color-muted: #75644f; /* 보조 텍스트 */
+  --color-faint: #a09079; /* 안내 문구, 비활성 아이콘 */
+  --color-line: #ecdfc8; /* 행 구분선 */
+  --color-surface: #ffffff; /* 입력, 칩, 카드, 탭바 */
+  --color-peach: #fdebcb; /* 말풍선 기본, 인기 1위, 아바타 */
+  --color-peach-2: #f6d3b8; /* 참여 완료, 숨김 버튼 */
+  --color-sand: #f4e9d4; /* 안내 박스 */
+  --color-track: #efe3cc; /* 비활성 버튼, 막대 트랙, 마감 pill */
+  --color-bar: #dcc9a5; /* 내 선택 외 막대 */
+  --color-handle: #dccaa6; /* 시트 핸들, 체크박스 테두리 */
+  --color-dash: #e3cfa8; /* 점선 버튼 */
+  --color-danger: #b4442a; /* 삭제·탈퇴·에러·신고 대기 */
+  --color-suspend-bg: #f6dccf; /* 정지 배너 */
+  --color-suspend-fg: #7a3419;
+  --color-kakao: #fee500; /* 카카오 브랜드 */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* 굵기는 800 / 700 / 400 세 가지만 */
+  --font-weight-*: initial;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-sans:
+    var(--font-nanum), "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+
+  /* 헤드라인 letter-spacing */
+  --tracking-logo: -0.06em;
+  --tracking-head: -0.05em;
+  --tracking-title: -0.045em;
+
+  --radius-*: initial;
+  --radius-bar: 5px;
+  --radius-control: 18px; /* 버튼·입력 */
+  --radius-cta: 20px; /* 큰 버튼 */
+  --radius-banner: 14px; /* 정지 배너 */
+  --radius-card: 22px;
+  --radius-card-lg: 28px;
+  --radius-sheet: 32px; /* 시트 상단 */
+  --radius-tabbar: 34px;
+  --radius-bubble: 24px 24px 6px 24px; /* 선택지 말풍선 */
+  --radius-pill: 999px;
+
+  /* 그림자는 탭바 하나뿐. 나머지는 플랫 */
+  --shadow-*: initial;
+  --shadow-tabbar: 0 8px 28px -14px rgba(90, 55, 20, 0.35);
+
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.3, 1.5, 0.5, 1);
+
+  --animate-up: up 0.34s var(--ease-out-soft) both; /* 화면 진입 */
+  --animate-cta: up 0.3s ease both; /* 하단 CTA 진입 */
+  --animate-sheet: sheet 0.3s var(--ease-out-soft) both;
+  --animate-fade: fade 0.2s ease both; /* 시트 딤 */
+  --animate-toast: toast 0.3s ease both;
+  --animate-grow: grow 0.7s var(--ease-out-soft) both; /* 결과 막대 (지연은 항목마다 90ms) */
+
+  @keyframes up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes sheet {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes toast {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 눌림: 모든 버튼·행·칩·말풍선 */
+@utility press {
+  transition:
+    transform 0.14s ease,
+    background-color 0.14s ease,
+    color 0.14s ease;
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+/* 스크롤은 되지만 스크롤바는 숨김 */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-bg-outer);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
+  /* 키보드 사용자를 위한 포커스 표시 (마우스·터치 클릭에는 나타나지 않음) */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* 접근성: 움직임을 줄이는 설정에서는 translate/scale 모션을 제거한다 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-up,
+  .animate-cta,
+  .animate-toast {
+    animation-name: fade;
+  }
+  .animate-sheet {
+    animation: none;
+  }
+  .animate-grow {
+    animation: none;
+  }
+  .press:active {
+    transform: none;
+  }
 }

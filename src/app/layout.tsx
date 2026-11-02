@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 
-import { MockProvider } from "@/shared/api/mocks/MockProvider";
+import { nanumSquareRound } from "@/shared/styles/fonts";
+import { AppShell } from "@/shared/ui/AppShell";
+import { ToastViewport } from "@/shared/ui/toast/ToastViewport";
 
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "어떰?",
@@ -11,9 +14,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={nanumSquareRound.variable}>
       <body>
-        <MockProvider>{children}</MockProvider>
+        <Providers>
+          <AppShell>{children}</AppShell>
+          <ToastViewport />
+        </Providers>
       </body>
     </html>
   );
