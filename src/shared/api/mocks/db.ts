@@ -25,6 +25,10 @@ export type MockPoll = {
   closesOnVote?: boolean;
   closesAt: string | null;
   createdAt: string;
+  /** 관리자가 숨긴 고민은 피드에 나오지 않고 작성자만 본다. 기본은 공개 */
+  status?: "PUBLIC" | "HIDDEN";
+  /** 내가 올린 고민 */
+  mine?: boolean;
 };
 
 const MIN = 60_000;
@@ -49,6 +53,7 @@ const SEED: Omit<MockPoll, "createdAt">[] = [
     options: ["충분해요", "부족해요", "사람마다 달라요"],
     votes: [77, 190, 50],
     closed: true,
+    mine: true,
     closesAt: null,
   },
   {
@@ -77,6 +82,7 @@ const SEED: Omit<MockPoll, "createdAt">[] = [
     options: ["답장한다", "읽고 무시", "차단"],
     votes: [154, 389, 97],
     closed: false,
+    mine: true,
     closesAt: null,
   },
   {
@@ -99,6 +105,19 @@ const SEED: Omit<MockPoll, "createdAt">[] = [
   },
 ];
 
+/** 내가 올렸지만 관리자가 숨긴 고민. 작성자 본인만 목록에서 "숨김"으로 본다. */
+const HIDDEN_MINE: Omit<MockPoll, "createdAt"> = {
+  id: "h1",
+  category: "ETC",
+  question: "숨김 처리된 내 고민 예시예요",
+  options: ["하나", "둘"],
+  votes: [3, 4],
+  closed: false,
+  closesAt: null,
+  status: "HIDDEN",
+  mine: true,
+};
+
 const FILLER_CATEGORIES: MockCategory[] = ["SOME", "CONTACT", "IN_RELATIONSHIP", "ETC"];
 
 /** "더 보기"(페이지네이션)를 확인할 수 있도록 20개를 넘기는 채움 데이터. */
@@ -114,7 +133,10 @@ const FILLER: Omit<MockPoll, "createdAt">[] = Array.from({ length: 24 }, (_, i) 
 
 /** 최신순 정렬을 위해 앞에서부터 1분씩 과거로 간다. */
 export const createInitialPolls = (): MockPoll[] =>
-  [...SEED, ...FILLER].map((poll, index) => ({ ...poll, createdAt: iso(-index * MIN) }));
+  [...SEED, HIDDEN_MINE, ...FILLER].map((poll, index) => ({
+    ...poll,
+    createdAt: iso(-index * MIN),
+  }));
 
 export type MockState = {
   polls: MockPoll[];

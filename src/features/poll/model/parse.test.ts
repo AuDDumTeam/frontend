@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { toCategory, toDate } from "./parse";
+import { toCategory, toDate, toPollStatus } from "./parse";
 
 describe("toCategory", () => {
   it("알려진 카테고리는 그대로, 모르는 값은 기타", () => {
@@ -21,5 +21,17 @@ describe("toDate", () => {
     expect(toDate(null)).toBeNull();
     expect(toDate(undefined)).toBeNull();
     expect(toDate("not-a-date")).toBeNull();
+  });
+});
+
+describe("toPollStatus", () => {
+  it("값이 없으면 공개로 본다", () => {
+    expect(toPollStatus(undefined)).toBe("PUBLIC");
+  });
+
+  it("알려진 상태는 그대로, 모르는 값은 null(모를 땐 비공개 쪽이 안전)", () => {
+    expect(toPollStatus("HIDDEN")).toBe("HIDDEN");
+    expect(toPollStatus("DELETED")).toBe("DELETED");
+    expect(toPollStatus("ARCHIVED")).toBeNull();
   });
 });

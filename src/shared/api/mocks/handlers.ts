@@ -28,6 +28,19 @@ const toResult = (poll: MockPoll) => ({
   options: poll.votes.map((count, position) => ({ position, count })),
 });
 
+/** 커서(=오프셋) 페이지네이션과 전체 개수(totalCount)를 붙여 내려준다. */
+function pageOf<T>(request: Request, all: MockPoll[], toItem: (poll: MockPoll) => T) {
+  const url = new URL(request.url);
+  const size = Math.min(Math.max(Number(url.searchParams.get("size")) || 20, 1), 50);
+  const offset = Number(url.searchParams.get("cursor")) || 0;
+  const next = offset + size;
+  return HttpResponse.json({
+    items: all.slice(offset, next).map(toItem),
+    nextCursor: next < all.length ? String(next) : null,
+    totalCount: all.length,
+  });
+}
+
 /**
  * 백엔드(openapi.json)의 읽기·투표 규칙을 흉내 내는 핸들러.
  * 그 외 엔드포인트는 Orval 이 만든 기본 핸들러가 맡는다. (browser.ts 에서 뒤에 붙임)
@@ -50,26 +63,46 @@ export function createHandlers(
         createdAt: new Date().toISOString(),
         role: role === "admin" ? "ADMIN" : "MEMBER",
         status: role === "suspended" ? "SUSPENDED" : "ACTIVE",
+        nickname: "말랑한 노른자", // 백엔드가 추가하기로 한 필드
       });
+    }),
+
+    // 아래 두 목록은 백엔드에 아직 없는 API 의 가정 계약이다. (features/my/api/contract.ts)
+    http.get("/api/v1/members/me/votes", async ({ request }) => {
+      await delay(latencyMs);
+      const mine = state.polls.filter((poll) => state.myVotes[poll.id] !== undefined);
+      return pageOf(request, mine, (poll) => {
+        const position = state.myVotes[poll.id] ?? 0;
+        const total = participantCount(poll);
+        return {
+          ...toSummary(poll),
+          myChoice: {
+            position,
+            content: poll.options[position],
+            percent: total ? Math.round(((poll.votes[position] ?? 0) / total) * 100) : 0,
+          },
+        };
+      });
+    }),
+
+    http.get("/api/v1/members/me/polls", async ({ request }) => {
+      await delay(latencyMs);
+      if (getRole() === "guest")
+        return error(401, "UNAUTHENTICATED", "로그인이 필요합니다.");
+      const posted = state.polls.filter((poll) => poll.mine);
+      return pageOf(request, posted, (poll) => ({
+        ...toSummary(poll),
+        status: poll.status ?? "PUBLIC",
+      }));
     }),
 
     http.get("/api/v1/polls", async ({ request }) => {
       await delay(latencyMs);
-      const url = new URL(request.url);
-      const category = url.searchParams.get("category");
-      const size = Math.min(Math.max(Number(url.searchParams.get("size")) || 20, 1), 50);
-      const offset = Number(url.searchParams.get("cursor")) || 0;
-
-      const filtered = state.polls.filter(
-        (poll) => !category || poll.category === category,
+      const category = new URL(request.url).searchParams.get("category");
+      const visible = state.polls.filter(
+        (poll) => poll.status !== "HIDDEN" && (!category || poll.category === category),
       );
-      const page = filtered.slice(offset, offset + size);
-      const next = offset + size;
-
-      return HttpResponse.json({
-        items: page.map(toSummary),
-        nextCursor: next < filtered.length ? String(next) : null,
-      });
+      return pageOf(request, visible, toSummary);
     }),
 
     http.post("/api/v1/polls", async ({ request }) => {
@@ -125,6 +158,7 @@ export function createHandlers(
         closed: false,
         closesAt: body.closesAt ?? null,
         createdAt: new Date().toISOString(),
+        mine: true,
       });
       state.lastCreatedAt = Date.now();
       // 실제 서버처럼 본문은 JSON 이 아닌 공개 ID 문자열이다.
@@ -143,7 +177,7 @@ export function createHandlers(
       const showResult = poll.closed || myChoice !== null;
       return HttpResponse.json({
         ...toSummary(poll),
-        status: "PUBLIC",
+        status: poll.status ?? "PUBLIC",
         options: poll.options.map((content, position) => ({ content, position })),
         myChoice,
         result: showResult ? toResult(poll) : null,

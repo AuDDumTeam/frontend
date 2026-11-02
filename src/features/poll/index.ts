@@ -8,4 +8,5 @@ export {
   type PollCategory,
 } from "./model/category";
 export { CLOSING_SOON_LABEL, formatRemaining, isClosingSoon } from "./model/closing";
-export { toCategory, toDate } from "./model/parse";
+export { toCategory, toDate, toPollStatus } from "./model/parse";
+export type { PollStatus } from "./model/poll";

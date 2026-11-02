@@ -4,3 +4,9 @@
  * (다른 키는 각 feature 가 소유한다.)
  */
 export const FEED_KEY_PREFIX = ["feed"] as const;
+
+/** 참여한 고민·내가 올린 고민 목록. 투표·작성·로그아웃에서 무효화한다. */
+export const MY_KEY_PREFIX = ["my"] as const;
+
+/** 고민 상세 캐시. 내 선택·결과처럼 계정마다 다른 값이 들어 있어 세션이 바뀌면 비운다. */
+export const POLL_KEY_PREFIX = ["poll"] as const;

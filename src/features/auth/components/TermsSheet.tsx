@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
+import { MY_KEY_PREFIX } from "@/shared/api/query-keys";
 import { cn } from "@/shared/lib/cn";
 import { MESSAGES } from "@/shared/lib/messages";
 import { BottomSheet } from "@/shared/ui/BottomSheet";
@@ -63,6 +64,8 @@ function TermsForm({ required, submitLabel, onDone }: TermsFormProps) {
     if (!ready) return;
     completeSignup();
     void queryClient.invalidateQueries({ queryKey: meKey });
+    // 비회원일 때 보던 참여 목록이 회원 화면에 남지 않게 한다. (서버가 기록을 옮길 수도 있다)
+    void queryClient.invalidateQueries({ queryKey: MY_KEY_PREFIX });
     toast(MESSAGES.account.joined);
     onDone();
   };

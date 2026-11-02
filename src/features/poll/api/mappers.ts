@@ -4,8 +4,8 @@ import type {
   VoteCastResponse,
 } from "@/shared/api/generated/model";
 
-import { toCategory, toDate } from "../model/parse";
-import type { Poll, PollOption, PollResult, PollStatus } from "../model/poll";
+import { toCategory, toDate, toPollStatus } from "../model/parse";
+import type { Poll, PollOption, PollResult } from "../model/poll";
 
 /**
  * API 응답은 모든 필드가 optional 이다(명세에 required 가 없음).
@@ -26,17 +26,6 @@ export function toPollResult(
   return { total: dto.total, counts };
 }
 
-const POLL_STATUSES: readonly PollStatus[] = ["PUBLIC", "HIDDEN", "DELETED"];
-
-/**
- * 값이 없으면 공개로 본다. 모르는 값은 null — 공개 여부는 모를 때 비공개 쪽이 안전하다.
- * (카테고리와 달리 "기타" 같은 안전한 기본값이 없다)
- */
-const toStatus = (value: string | undefined): PollStatus | null => {
-  if (value === undefined) return "PUBLIC";
-  return POLL_STATUSES.find((s) => s === value) ?? null;
-};
-
 export function toPoll(dto: PollDetailResponse): Poll | null {
   if (!dto.id || !dto.question) return null;
 
@@ -50,7 +39,7 @@ export function toPoll(dto: PollDetailResponse): Poll | null {
   // 선택지가 2개 미만이면 고민으로 성립하지 않는다.
   if (options.length < 2) return null;
 
-  const status = toStatus(dto.status);
+  const status = toPollStatus(dto.status);
   if (!status) return null;
 
   const closed = dto.closed ?? false;

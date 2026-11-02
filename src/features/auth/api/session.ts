@@ -23,3 +23,8 @@ export function startKakaoLogin(): "mock-signup" | null {
 export function completeSignup() {
   if (MOCKING_ENABLED) writeMockRole("member");
 }
+
+/** 로그아웃·탈퇴로 세션이 끝났음을 반영한다. 실제로는 서버가 쿠키를 지우므로 목 모드에서만 비회원으로 바꾼다. */
+export function endSession() {
+  if (MOCKING_ENABLED) writeMockRole("guest");
+}

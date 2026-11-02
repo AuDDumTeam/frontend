@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { meKey } from "@/features/auth";
 import { castVote, getPoll } from "@/shared/api/generated/auddum";
-import { FEED_KEY_PREFIX } from "@/shared/api/query-keys";
+import { FEED_KEY_PREFIX, MY_KEY_PREFIX, POLL_KEY_PREFIX } from "@/shared/api/query-keys";
 import { getErrorMessage, hasErrorCode } from "@/shared/lib/error-messages";
 import { MESSAGES } from "@/shared/lib/messages";
 import { toast } from "@/shared/ui/toast/toast-store";
@@ -12,7 +12,7 @@ import type { Poll } from "../model/poll";
 import { toPoll, toVote } from "./mappers";
 
 export const pollKeys = {
-  detail: (pollId: string) => ["poll", pollId] as const,
+  detail: (pollId: string) => [...POLL_KEY_PREFIX, pollId] as const,
   /** 피드 목록은 feed 가 관리한다. 투표하면 참여 인원이 달라지므로 무효화만 한다. */
   feed: FEED_KEY_PREFIX,
 };
@@ -60,6 +60,7 @@ export function usePollVote(pollId: string) {
         void queryClient.invalidateQueries({ queryKey: pollKeys.detail(pollId) });
       }
       void queryClient.invalidateQueries({ queryKey: pollKeys.feed });
+      void queryClient.invalidateQueries({ queryKey: MY_KEY_PREFIX });
     },
     onError: (error) => {
       toast(getErrorMessage(error, "vote"));

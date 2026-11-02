@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 
 import { meKey, useAuthSheetStore } from "@/features/auth";
 import { createPoll } from "@/shared/api/generated/auddum";
-import { FEED_KEY_PREFIX } from "@/shared/api/query-keys";
+import { FEED_KEY_PREFIX, MY_KEY_PREFIX } from "@/shared/api/query-keys";
 import { getErrorMessage, hasErrorCode } from "@/shared/lib/error-messages";
 import { MESSAGES } from "@/shared/lib/messages";
 import { toast } from "@/shared/ui/toast/toast-store";
@@ -25,6 +25,7 @@ export function useCreatePoll() {
       toCreatedPollId((await createPoll(input)).data),
     onSuccess: (id) => {
       void queryClient.invalidateQueries({ queryKey: FEED_KEY_PREFIX });
+      void queryClient.invalidateQueries({ queryKey: MY_KEY_PREFIX });
       toast(MESSAGES.write.posted);
       router.push(id ? `/p/${id}` : "/");
     },
